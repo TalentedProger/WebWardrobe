@@ -108,7 +108,7 @@
 }
 
 .glass-nav {
-  background: hsla(206, 89%, 91%, 0.08); /* More transparent */
+  background: hsla(206, 89%, 91%, 0.08); /* Always transparent glass effect */
   backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(30px);
   border-top: 1px solid var(--glass-border);
@@ -246,27 +246,27 @@
   border: 1px solid var(--glass-border);
 }
 
-/* Modern scrollbar */
+/* Modern scrollbar - transparent glass effect */
 ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: hsla(23, 21%, 83%, 0.1);
+  background: transparent;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, 
-    hsl(39, 53%, 72%) 0%, 
-    hsl(206, 89%, 91%) 100%);
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, 
-    hsl(39, 53%, 62%) 0%, 
-    hsl(206, 89%, 81%) 100%);
+  background: hsla(206, 89%, 91%, 0.3);
+  border-color: hsl(206, 89%, 91%);
 }
 
 /* Minimalist focus styles */

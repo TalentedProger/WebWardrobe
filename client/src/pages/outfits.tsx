@@ -288,7 +288,7 @@ export default function OutfitsPage() {
       <div className="p-6">
 
         {/* Category Filters */}
-        <div className="flex overflow-x-auto space-x-3 mb-6 pb-2 p-3 rounded-2xl glass-card">
+        <div className="flex overflow-x-auto space-x-3 mb-6 pb-2 p-3 rounded-2xl" style={{background: 'transparent'}}>
           {categories.map((category) => (
             <button
               key={category.id}
@@ -346,7 +346,7 @@ export default function OutfitsPage() {
 
         {filteredOutfits.length === 0 && !isLoading && (
           <div className="text-center py-12">
-            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 glass-button">
               <Plus size={24} className="text-muted-foreground" />
             </div>
             <p className="text-muted-foreground mb-4">

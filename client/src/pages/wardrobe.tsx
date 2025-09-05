@@ -69,12 +69,12 @@ export default function WardrobePage() {
 
       <div className="p-6">
         {/* Upload Section */}
-        <div className="mb-6 p-6 rounded-2xl" style={{backgroundColor: '#D0E6FD'}}>
-          <h2 className="text-lg font-medium text-foreground mb-4">Загрузить одежду</h2>
+        <div className="mb-6 p-6 rounded-2xl" style={{backgroundColor: '#112250'}}>
+          <h2 className="text-lg font-medium text-white mb-4">Загрузить одежду</h2>
           <div className="grid grid-cols-2 gap-3">
             <button 
               onClick={handleAddItem}
-              className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-white/60 rounded-xl text-muted-foreground hover:bg-white/20 hover:border-white transition-all duration-300"
+              className="flex flex-col items-center justify-center p-4 bg-white/20 border border-white/60 rounded-xl text-white hover:bg-white/30 transition-all duration-300"
               data-testid="button-camera"
               style={{borderColor: 'white'}}
             >
@@ -83,7 +83,7 @@ export default function WardrobePage() {
             </button>
             <button 
               onClick={handleAddItem}
-              className="flex flex-col items-center justify-center p-4 bg-white/20 border border-white/60 rounded-xl text-muted-foreground hover:bg-white/30 transition-all duration-300"
+              className="flex flex-col items-center justify-center p-4 bg-white/20 border border-white/60 rounded-xl text-white hover:bg-white/30 transition-all duration-300"
               data-testid="button-upload"
               style={{borderColor: 'white'}}
             >
@@ -94,7 +94,7 @@ export default function WardrobePage() {
         </div>
 
         {/* Category Filters */}
-        <div className="flex overflow-x-auto space-x-3 mb-6 pb-2 p-3 rounded-2xl glass-card">
+        <div className="flex overflow-x-auto space-x-3 mb-6 pb-2 p-3 rounded-2xl" style={{background: 'transparent'}}>
           {categories.map((category) => (
             <button
               key={category.id}
