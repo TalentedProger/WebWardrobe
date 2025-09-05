@@ -39,7 +39,7 @@ export default function ClothingItem({ item, onSelect, onDelete }: ClothingItemP
 
   return (
     <div 
-      className="bg-card rounded-2xl border border-border overflow-hidden hover:shadow-md transition-all duration-200 cursor-pointer relative"
+      className="clothing-item glass-card overflow-hidden cursor-pointer relative"
       onClick={handleItemClick}
       data-testid={`clothing-item-${item.id}`}
     >
@@ -52,7 +52,7 @@ export default function ClothingItem({ item, onSelect, onDelete }: ClothingItemP
         <div className="absolute top-2 right-2 flex space-x-1">
           <button
             onClick={handleHeartClick}
-            className="bg-card/90 rounded-full p-1.5 hover:bg-card transition-colors"
+            className="glass-button rounded-full p-1.5"
             data-testid={`button-favorite-${item.id}`}
           >
             <Heart 
@@ -63,7 +63,7 @@ export default function ClothingItem({ item, onSelect, onDelete }: ClothingItemP
           {onDelete && (
             <button
               onClick={handleMenuClick}
-              className="bg-card/90 rounded-full p-1.5 hover:bg-card transition-colors"
+              className="glass-button rounded-full p-1.5"
               data-testid={`button-menu-${item.id}`}
             >
               <MoreVertical size={14} className="text-muted-foreground" />
@@ -71,14 +71,14 @@ export default function ClothingItem({ item, onSelect, onDelete }: ClothingItemP
           )}
         </div>
         {showMenu && onDelete && (
-          <div className="absolute top-12 right-2 bg-card border border-border rounded-lg shadow-lg z-10">
+          <div className="absolute top-12 right-2 glass-card z-10">
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 onDelete(item.id);
                 setShowMenu(false);
               }}
-              className="block w-full px-4 py-2 text-left text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+              className="block w-full px-4 py-2 text-left text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
               data-testid={`button-delete-${item.id}`}
             >
               Удалить

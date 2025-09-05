@@ -11,7 +11,7 @@ export default function Navigation() {
   const [location] = useLocation();
 
   return (
-    <nav className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-card border-t border-border">
+    <nav className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md glass-nav">
       <div className="flex justify-around py-3">
         {navigationItems.map((item) => {
           const isActive = location === item.path || (location === "/" && item.path === "/wardrobe");
@@ -19,8 +19,8 @@ export default function Navigation() {
             <Link
               key={item.path}
               href={item.path}
-              className={`flex flex-col items-center space-y-1 py-2 px-4 transition-colors duration-200 ${
-                isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+              className={`nav-item flex flex-col items-center space-y-1 py-2 px-4 rounded-xl ${
+                isActive ? "active text-primary font-semibold" : "text-muted-foreground hover:text-foreground"
               }`}
               data-testid={`nav-${item.path.slice(1)}`}
             >

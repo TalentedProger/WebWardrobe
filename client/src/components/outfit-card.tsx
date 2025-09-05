@@ -13,7 +13,7 @@ export default function OutfitCard({ outfit, onSelect, onDelete }: OutfitCardPro
   return (
     <div
       onClick={onSelect}
-      className="bg-card rounded-2xl overflow-hidden border border-border hover:shadow-md transition-all cursor-pointer"
+      className="glass-card overflow-hidden cursor-pointer transition-all duration-300 hover:transform hover:scale-[1.02]"
       data-testid={`outfit-card-${outfit.id}`}
     >
       <div className="flex">
@@ -29,7 +29,7 @@ export default function OutfitCard({ outfit, onSelect, onDelete }: OutfitCardPro
               <span className="text-2xl">👔</span>
             </div>
           )}
-          <div className="absolute bottom-2 right-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full">
+          <div className="absolute bottom-2 right-2 glass-button text-primary text-xs px-2 py-1 rounded-full">
             {itemCount} {itemCount === 1 ? "вещь" : itemCount < 5 ? "вещи" : "вещей"}
           </div>
         </div>
@@ -48,7 +48,7 @@ export default function OutfitCard({ outfit, onSelect, onDelete }: OutfitCardPro
                 e.stopPropagation();
                 onDelete();
               }}
-              className="p-2 hover:bg-muted rounded-lg transition-colors"
+              className="glass-button p-2 rounded-lg"
               data-testid={`button-outfit-menu-${outfit.id}`}
             >
               <MoreVertical size={16} className="text-muted-foreground" />
@@ -76,7 +76,7 @@ export default function OutfitCard({ outfit, onSelect, onDelete }: OutfitCardPro
                   e.stopPropagation();
                   // Handle share
                 }}
-                className="p-2 hover:bg-muted rounded-lg transition-colors"
+                className="glass-button p-2 rounded-lg"
                 data-testid={`button-share-${outfit.id}`}
               >
                 <Share size={14} className="text-muted-foreground" />
@@ -86,7 +86,7 @@ export default function OutfitCard({ outfit, onSelect, onDelete }: OutfitCardPro
                   e.stopPropagation();
                   // Handle edit
                 }}
-                className="p-2 hover:bg-muted rounded-lg transition-colors"
+                className="glass-button p-2 rounded-lg"
                 data-testid={`button-edit-${outfit.id}`}
               >
                 <Edit size={14} className="text-muted-foreground" />
