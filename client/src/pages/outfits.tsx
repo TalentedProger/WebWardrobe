@@ -288,7 +288,7 @@ export default function OutfitsPage() {
       <div className="p-6">
 
         {/* Category Filters */}
-        <div className="flex overflow-x-auto space-x-3 mb-6 pb-2 p-3 rounded-2xl" style={{background: 'transparent'}}>
+        <div className="flex overflow-x-auto space-x-3 mb-6 pb-2 p-3 rounded-2xl glass-scrollbar" style={{background: 'transparent'}}>
           {categories.map((category) => (
             <button
               key={category.id}

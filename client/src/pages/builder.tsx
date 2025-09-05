@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Check, X, User, ArrowLeft, Plus } from "lucide-react";
+import { Check, X, User, ArrowLeft, Plus, Settings, Sparkles } from "lucide-react";
 import { queryClient } from "@/lib/queryClient";
 import { apiRequest } from "@/lib/queryClient";
 import ClothingItem from "@/components/clothing-item";
@@ -93,7 +93,12 @@ export default function BuilderPage() {
     return (
       <div className="flex-1 bg-background pb-20">
         <header className="border-b border-border px-6 py-4 sticky top-14 z-50">
-          <h1 className="text-xl font-semibold text-foreground">Создать образ</h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-xl font-semibold text-foreground">Создать образ</h1>
+            <button className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors" data-testid="button-settings">
+              <Settings size={20} />
+            </button>
+          </div>
         </header>
 
         <div className="p-6">
@@ -294,8 +299,8 @@ export default function BuilderPage() {
 
           {/* Background Carousel */}
           <div className="mb-6">
-            <h3 className="text-sm font-medium text-foreground mb-3">Фон сцены</h3>
-            <div className="flex gap-3 overflow-x-auto pb-2">
+            <h3 className="text-lg font-bold text-foreground mb-4">Фон сцены</h3>
+            <div className="flex gap-3 overflow-x-auto pb-2 glass-scrollbar">
               {backgroundOptions.map((bg) => (
                 <button
                   key={bg.id}
@@ -312,6 +317,26 @@ export default function BuilderPage() {
                   />
                 </button>
               ))}
+            </div>
+          </div>
+
+          {/* Outfit Parameters */}
+          <div className="mb-6">
+            <h3 className="text-lg font-bold text-foreground mb-4">Параметры образа</h3>
+            <div className="space-y-4">
+              <input
+                type="text"
+                placeholder="Введите название образа"
+                className="w-full p-3 border border-border rounded-xl bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                data-testid="input-outfit-name"
+              />
+              
+              <select className="w-full p-3 border border-border rounded-xl bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50" data-testid="select-category">
+                <option value="new">Новая категория</option>
+                <option value="work">Работа</option>
+                <option value="casual">Повседневное</option>
+                <option value="sport">Спорт</option>
+              </select>
             </div>
           </div>
 
@@ -352,36 +377,96 @@ export default function BuilderPage() {
             >
               <ArrowLeft size={20} />
             </button>
-            <h1 className="text-xl font-semibold text-foreground">Образ готов!</h1>
           </div>
         </header>
 
         <div className="p-6 text-center">
           <div className="mb-8">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4" style={{boxShadow: '0 8px 24px rgba(34, 197, 94, 0.3)'}}>
               <Check size={32} className="text-green-600" />
             </div>
-            <h2 className="text-2xl font-light text-foreground mb-4">Образ готов!</h2>
-            <p className="text-muted-foreground">Ваш образ сохранён в профиле</p>
+            <h2 className="text-2xl font-light text-foreground mb-6">Образ готов!</h2>
+            
+            {/* Generated Outfit Image */}
+            <div className="w-48 mx-auto mb-8">
+              <div 
+                className="w-full bg-cover bg-center rounded-2xl relative overflow-hidden border-2 border-border"
+                style={{ 
+                  aspectRatio: '3/4',
+                  backgroundImage: `url(${selectedBackground.url})`,
+                  boxShadow: '0 12px 32px rgba(0, 0, 0, 0.15)'
+                }}
+              >
+                <div className="absolute inset-0 bg-black/20"></div>
+                {Object.entries(currentOutfit).map(([slotKey, item], index) => {
+                  if (!item) return null;
+                  const scale = itemScales[slotKey] || 1;
+                  const position = itemPositions[slotKey] || { x: 50 + index * 20, y: 100 + index * 50 };
+                  
+                  return (
+                    <div
+                      key={slotKey}
+                      className="absolute select-none"
+                      style={{
+                        left: `${position.x}px`,
+                        top: `${position.y}px`,
+                        transform: `scale(${scale})`,
+                        transformOrigin: 'center',
+                        zIndex: 10,
+                      }}
+                    >
+                      <img
+                        src={item.imageUrl}
+                        alt={item.name}
+                        className="w-12 h-12 object-cover rounded-lg"
+                        style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))' }}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-4">
+            {/* Top Row Buttons */}
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => {
+                  setCurrentStep("build");
+                  setCurrentOutfit({
+                    headwear: null,
+                    jacket: null,
+                    top: null,
+                    bottom: null,
+                    shoes: null,
+                    accessory: null,
+                  });
+                }}
+                className="py-3 px-4 text-white rounded-xl font-medium hover:opacity-90 transition-colors"
+                style={{backgroundColor: '#E0C58F'}}
+                data-testid="button-create-new"
+              >
+                Создать новый
+              </button>
+              <button
+                onClick={() => window.location.href = '/outfits'}
+                className="py-3 px-4 text-white rounded-xl font-medium hover:opacity-90 transition-colors"
+                style={{backgroundColor: '#112250'}}
+                data-testid="button-to-outfits"
+              >
+                К образам
+              </button>
+            </div>
+            
+            {/* AI Generation Button */}
             <button
-              onClick={() => {
-                setCurrentStep("build");
-                setCurrentOutfit({
-                  headwear: null,
-                  jacket: null,
-                  top: null,
-                  bottom: null,
-                  shoes: null,
-                  accessory: null,
-                });
-              }}
-              className="w-full py-3 bg-primary text-primary-foreground font-medium rounded-xl hover:bg-primary/90 transition-colors"
-              data-testid="button-create-new"
+              onClick={() => {/* Handle AI generation */}}
+              className="w-full py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-2xl hover:from-purple-600 hover:to-pink-600 transition-all"
+              data-testid="button-ai-generate-final"
             >
-              Создать новый образ
+              <Sparkles size={16} className="inline mr-2" />
+              AI generation образа
             </button>
           </div>
         </div>
