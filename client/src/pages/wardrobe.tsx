@@ -53,7 +53,7 @@ export default function WardrobePage() {
   return (
     <div className="flex-1 bg-background pb-20">
       {/* Header */}
-      <header className="bg-card border-b border-border px-6 py-4 sticky top-14 z-50">
+      <header className="border-b border-border px-6 py-4 sticky top-14 z-50">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-semibold text-foreground">Мой Гардероб</h1>
           <div className="flex items-center space-x-3">
@@ -69,21 +69,23 @@ export default function WardrobePage() {
 
       <div className="p-6">
         {/* Upload Section */}
-        <div className="mb-6 p-6 bg-muted rounded-2xl">
+        <div className="mb-6 p-6 rounded-2xl" style={{backgroundColor: '#D0E6FD'}}>
           <h2 className="text-lg font-medium text-foreground mb-4">Загрузить одежду</h2>
           <div className="grid grid-cols-2 gap-3">
             <button 
               onClick={handleAddItem}
-              className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-border rounded-xl text-muted-foreground hover:bg-accent hover:border-primary transition-all duration-300"
+              className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-white/60 rounded-xl text-muted-foreground hover:bg-white/20 hover:border-white transition-all duration-300"
               data-testid="button-camera"
+              style={{borderColor: 'white'}}
             >
               <Camera size={24} className="mb-2" />
               <span className="text-sm font-medium">Сфотографировать</span>
             </button>
             <button 
               onClick={handleAddItem}
-              className="flex flex-col items-center justify-center p-4 bg-primary/10 border border-primary/20 rounded-xl text-primary hover:bg-primary/20 transition-all duration-300"
+              className="flex flex-col items-center justify-center p-4 bg-white/20 border border-white/60 rounded-xl text-muted-foreground hover:bg-white/30 transition-all duration-300"
               data-testid="button-upload"
+              style={{borderColor: 'white'}}
             >
               <Upload size={24} className="mb-2" />
               <span className="text-sm font-medium">Загрузить фото</span>

@@ -20,7 +20,7 @@ export default function Navigation() {
               key={item.path}
               href={item.path}
               className={`nav-item flex flex-col items-center space-y-1 py-2 px-4 rounded-xl ${
-                isActive ? "active text-primary font-semibold" : "text-muted-foreground hover:text-foreground"
+                isActive ? "active text-primary font-semibold" : "text-muted-foreground hover:text-foreground hover:bg-[#D9CBC2]/20"
               }`}
               data-testid={`nav-${item.path.slice(1)}`}
             >

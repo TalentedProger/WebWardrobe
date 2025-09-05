@@ -203,9 +203,8 @@
 }
 
 .nav-item.active {
-  background: linear-gradient(135deg, 
-    hsla(39, 53%, 72%, 0.3) 0%, 
-    hsla(206, 89%, 91%, 0.3) 100%);
+  background: hsla(23, 21%, 83%, 0.4); /* #D9CBC2 with transparency */
+  border: 1px solid hsla(23, 21%, 83%, 0.6);
 }
 
 .floating-action {

@@ -148,7 +148,8 @@ export default function BuilderPage() {
                 shoes: null,
                 accessory: null,
               })}
-              className="py-3 px-4 bg-muted text-muted-foreground rounded-xl font-medium hover:bg-accent transition-colors"
+              className="py-3 px-4 text-white rounded-xl font-medium hover:opacity-90 transition-colors"
+              style={{backgroundColor: '#E0C58F'}}
               data-testid="button-clear"
             >
               Очистить
@@ -156,7 +157,8 @@ export default function BuilderPage() {
             <button
               onClick={() => setCurrentStep("arrange")}
               disabled={Object.values(currentOutfit).every(item => !item)}
-              className="py-3 px-4 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="py-3 px-4 text-white rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
+              style={{backgroundColor: '#112250'}}
               data-testid="button-next"
             >
               Далее
@@ -317,7 +319,8 @@ export default function BuilderPage() {
           <div className="grid grid-cols-2 gap-3">
             <button
               onClick={() => setCurrentStep("build")}
-              className="py-3 px-4 bg-muted text-muted-foreground rounded-xl font-medium hover:bg-accent transition-colors"
+              className="py-3 px-4 text-white rounded-xl font-medium hover:opacity-90 transition-colors"
+              style={{backgroundColor: '#E0C58F'}}
               data-testid="button-back"
             >
               Назад
@@ -325,7 +328,8 @@ export default function BuilderPage() {
             <button
               onClick={handleSaveOutfit}
               disabled={saveOutfitMutation.isPending}
-              className="py-3 px-4 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="py-3 px-4 text-white rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
+              style={{backgroundColor: '#112250'}}
               data-testid="button-save-outfit"
             >
               {saveOutfitMutation.isPending ? "Сохранение..." : "Сохранить образ"}
