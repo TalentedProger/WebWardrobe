@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { ArrowLeft, MoreHorizontal, Share, Trash2, Sparkles, Plus, Minus } from "lucide-react";
+import { ArrowLeft, MoreHorizontal, Share, Trash2, Sparkles, Plus, Minus, Heart } from "lucide-react";
 import { queryClient } from "@/lib/queryClient";
 import { apiRequest } from "@/lib/queryClient";
 import type { Outfit, ClothingItem } from "@shared/schema";
@@ -105,6 +105,16 @@ export default function OutfitsPage() {
 
   const filteredItemsForSlot = (slotKey: string) =>
     clothingItems.filter(item => item.type === slotKey);
+  
+  const getSeason = (season: string) => {
+    const seasonEmojis: Record<string, string> = {
+      'зима': 'Зима ❄️',
+      'весна': 'Весна 🌸',
+      'лето': 'Лето ☀️',
+      'осень': 'Осень 🍂'
+    };
+    return seasonEmojis[season] || season || 'Не указан';
+  };
 
   if (selectedOutfit) {
     const outfitItems = getItemsForOutfit(selectedOutfit);
@@ -136,6 +146,24 @@ export default function OutfitsPage() {
         </header>
 
         <div className="p-6">
+          {/* Outfit Title */}
+          <h1 className="text-xl font-bold text-center text-foreground mb-6">{selectedOutfit.name}</h1>
+          
+          {/* Outfit Parameters */}
+          <div className="text-left mb-6">
+            <div className="space-y-2">
+              <div className="text-sm text-foreground">
+                <span className="font-medium">Категория:</span> {selectedOutfit.category || 'Не указано'}
+              </div>
+              <div className="text-sm text-foreground">
+                <span className="font-medium">Стиль:</span> {selectedOutfit.style || 'Не указан'}
+              </div>
+              <div className="text-sm text-foreground">
+                <span className="font-medium">Сезон:</span> {getSeason(selectedOutfit.season)}
+              </div>
+            </div>
+          </div>
+          
           {/* Outfit Cover */}
           <div className="w-full max-w-sm mx-auto mb-6">
             <div 
@@ -320,28 +348,39 @@ export default function OutfitsPage() {
         ) : (
           <div className="grid grid-cols-2 gap-4">
             {filteredOutfits.map((outfit) => (
-              <button
-                key={outfit.id}
-                onClick={() => {
-                  setSelectedOutfit(outfit);
-                  // Initialize edited outfit with current items
-                  const outfitItems: Record<string, ClothingItem | null> = {};
-                  Object.entries(outfit.items).forEach(([slot, itemId]) => {
-                    const item = clothingItems.find(ci => ci.id === itemId) || null;
-                    outfitItems[slot] = item;
-                  });
-                  setEditedOutfit(outfitItems);
-                  setHasChanges(false);
-                }}
-                className="aspect-[3/4] rounded-2xl overflow-hidden bg-muted border-0 hover:scale-105 transition-transform duration-200"
-                data-testid={`outfit-tile-${outfit.id}`}
-              >
-                <img
-                  src={getOutfitCover(outfit)}
-                  alt={outfit.name}
-                  className="w-full h-full object-cover"
-                />
-              </button>
+              <div key={outfit.id} className="relative">
+                <button
+                  onClick={() => {
+                    setSelectedOutfit(outfit);
+                    // Initialize edited outfit with current items
+                    const outfitItems: Record<string, ClothingItem | null> = {};
+                    Object.entries(outfit.items).forEach(([slot, itemId]) => {
+                      const item = clothingItems.find(ci => ci.id === itemId) || null;
+                      outfitItems[slot] = item;
+                    });
+                    setEditedOutfit(outfitItems);
+                    setHasChanges(false);
+                  }}
+                  className="aspect-[3/4] rounded-2xl overflow-hidden bg-muted border-0 hover:scale-105 transition-transform duration-200 w-full"
+                  data-testid={`outfit-tile-${outfit.id}`}
+                >
+                  <img
+                    src={getOutfitCover(outfit)}
+                    alt={outfit.name}
+                    className="w-full h-full object-cover"
+                  />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    // Handle favorite toggle
+                  }}
+                  className="absolute top-2 right-2 favorite-button rounded-full p-1.5"
+                  data-testid={`button-favorite-outfit-${outfit.id}`}
+                >
+                  <Heart size={14} className="favorite-icon-inactive" />
+                </button>
+              </div>
             ))}
           </div>
         )}

@@ -42,6 +42,9 @@ export default function BuilderPage() {
   const [itemPositions, setItemPositions] = useState<Record<string, { x: number; y: number }>>({});
   const [customCategory, setCustomCategory] = useState("");
   const [isEditingCategory, setIsEditingCategory] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedSeason, setSelectedSeason] = useState("");
+  const [selectedStyle, setSelectedStyle] = useState("");
 
 
   const { data: clothingItems = [] } = useQuery<ClothingItemType[]>({
@@ -132,30 +135,41 @@ export default function BuilderPage() {
             })}
           </div>
 
-          {/* Accessory Plus Button */}
-          <div className="flex justify-center mb-4">
-            <button
-              onClick={() => setActiveSlot('accessory')}
-              className="flex items-center gap-2 px-4 py-2 bg-muted/50 rounded-full border border-border hover:border-primary/50 transition-all duration-200"
-              data-testid="slot-accessory"
-            >
-              <Plus size={16} className="text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">Добавить аксессуар</span>
-            </button>
-          </div>
-          
-          {/* Added Accessories Display */}
-          {currentOutfit.accessory && (
-            <div className="flex justify-center mb-8">
-              <div className="w-20 h-20 rounded-2xl bg-muted/50 border-2 border-solid border-border flex items-center justify-center relative">
-                <img
-                  src={currentOutfit.accessory.imageUrl}
-                  alt={currentOutfit.accessory.name}
-                  className="w-full h-full object-cover rounded-xl"
-                />
+          {/* Accessories Section */}
+          <div className="mb-8">
+            <div className="flex justify-center mb-4">
+              <button
+                onClick={() => setActiveSlot('accessory')}
+                className="flex items-center gap-2 px-4 py-2 bg-muted/50 rounded-full border border-border hover:border-primary/50 transition-all duration-200"
+                data-testid="slot-accessory"
+              >
+                <Plus size={16} className="text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">Добавить аксессуар</span>
+              </button>
+            </div>
+            
+            {/* Accessories Display Row */}
+            <div className="flex justify-start gap-3 overflow-x-auto pb-2">
+              {currentOutfit.accessory && (
+                <div className="w-20 h-20 rounded-2xl bg-muted/50 border-2 border-solid border-border flex items-center justify-center relative">
+                  <img
+                    src={currentOutfit.accessory.imageUrl}
+                    alt={currentOutfit.accessory.name}
+                    className="w-full h-full object-cover rounded-xl"
+                  />
+                </div>
+              )}
+              
+              {/* Additional empty slots */}
+              <div className="w-20 h-20 rounded-2xl bg-muted/50 border-2 border-solid border-border flex items-center justify-center">
+                <Plus size={16} className="text-muted-foreground" />
+              </div>
+              
+              <div className="w-20 h-20 rounded-2xl bg-muted/50 border-2 border-solid border-border flex items-center justify-center">
+                <Plus size={16} className="text-muted-foreground" />
               </div>
             </div>
-          )}
+          </div>
 
           {/* Action Buttons */}
           <div className="grid grid-cols-2 gap-3">
@@ -346,44 +360,46 @@ export default function BuilderPage() {
                 data-testid="input-outfit-name"
               />
               
-              {isEditingCategory ? (
-                <input
-                  type="text"
-                  value={customCategory}
-                  onChange={(e) => setCustomCategory(e.target.value)}
-                  onBlur={() => {
-                    if (customCategory.trim()) {
-                      setIsEditingCategory(false);
-                    }
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && customCategory.trim()) {
-                      setIsEditingCategory(false);
-                    }
-                  }}
-                  placeholder="Введите название категории"
-                  className="w-full p-3 border border-border rounded-xl bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-                  autoFocus
-                  data-testid="input-custom-category"
-                />
-              ) : (
-                <select 
-                  className="w-full p-3 border border-border rounded-xl bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50" 
-                  data-testid="select-category"
-                  onChange={(e) => {
-                    if (e.target.value === 'new') {
-                      setIsEditingCategory(true);
-                      setCustomCategory('');
-                    }
-                  }}
-                >
-                  <option value="work">Работа</option>
-                  <option value="casual">Повседневное</option>
-                  <option value="sport">Спорт</option>
-                  <option value="new">Новая категория</option>
-                  {customCategory && <option value={customCategory}>{customCategory}</option>}
-                </select>
-              )}
+              <select 
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="w-full p-3 border border-border rounded-xl bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50" 
+                data-testid="select-outfit-category"
+              >
+                <option value="">Выберите категорию</option>
+                <option value="повседневный">Повседневный</option>
+                <option value="работа">Работа</option>
+                <option value="свидание">Свидание</option>
+                <option value="вечеринка">Вечеринка</option>
+                <option value="отпуск">Отпуск</option>
+              </select>
+              
+              <select 
+                value={selectedStyle}
+                onChange={(e) => setSelectedStyle(e.target.value)}
+                className="w-full p-3 border border-border rounded-xl bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50" 
+                data-testid="select-outfit-style"
+              >
+                <option value="">Выберите стиль</option>
+                <option value="классический">Классический</option>
+                <option value="спортивный">Спортивный</option>
+                <option value="кажуал">Кажуал</option>
+                <option value="элегантный">Элегантный</option>
+              </select>
+              
+              <select 
+                value={selectedSeason}
+                onChange={(e) => setSelectedSeason(e.target.value)}
+                className="w-full p-3 border border-border rounded-xl bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50" 
+                data-testid="select-outfit-season"
+              >
+                <option value="">Выберите сезон</option>
+                <option value="зима">Зима</option>
+                <option value="весна">Весна</option>
+                <option value="лето">Лето</option>
+                <option value="осень">Осень</option>
+              </select>
+              
             </div>
           </div>
 

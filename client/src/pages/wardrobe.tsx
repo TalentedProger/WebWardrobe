@@ -112,6 +112,22 @@ export default function WardrobePage() {
               {category.label}
             </button>
           ))}
+          
+          {/* Favorites Button */}
+          <button
+            onClick={() => setSelectedCategory('favorites')}
+            className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-colors duration-200 ${
+              selectedCategory === 'favorites'
+                ? "text-white font-medium" 
+                : "category-button-inactive font-bold hover:opacity-80"
+            }`}
+            style={{
+              backgroundColor: selectedCategory === 'favorites' ? '#112250' : '#E0C58F'
+            }}
+            data-testid="filter-favorites"
+          >
+            Избранное ❤️
+          </button>
         </div>
 
         {/* Clothing Grid */}
