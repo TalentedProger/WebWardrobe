@@ -1,0 +1,884 @@
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Виртуальный Гардероб - Fashion AI App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    borderRadius: {
+                        lg: "var(--radius)",
+                        md: "calc(var(--radius) - 2px)",
+                        sm: "calc(var(--radius) - 4px)",
+                    },
+                    colors: {
+                        background: "var(--background)",
+                        foreground: "var(--foreground)",
+                        card: {
+                            DEFAULT: "var(--card)",
+                            foreground: "var(--card-foreground)",
+                        },
+                        popover: {
+                            DEFAULT: "var(--popover)",
+                            foreground: "var(--popover-foreground)",
+                        },
+                        primary: {
+                            DEFAULT: "var(--primary)",
+                            foreground: "var(--primary-foreground)",
+                        },
+                        secondary: {
+                            DEFAULT: "var(--secondary)",
+                            foreground: "var(--secondary-foreground)",
+                        },
+                        muted: {
+                            DEFAULT: "var(--muted)",
+                            foreground: "var(--muted-foreground)",
+                        },
+                        accent: {
+                            DEFAULT: "var(--accent)",
+                            foreground: "var(--accent-foreground)",
+                        },
+                        destructive: {
+                            DEFAULT: "var(--destructive)",
+                            foreground: "var(--destructive-foreground)",
+                        },
+                        border: "var(--border)",
+                        input: "var(--input)",
+                        ring: "var(--ring)",
+                    },
+                    fontFamily: {
+                        sans: ["var(--font-sans)"],
+                    }
+                },
+            }
+        };
+    </script>
+    <style>
+        :root {
+            --background: hsl(0 0% 100%);
+            --foreground: hsl(222.2 84% 4.9%);
+            --card: hsl(0 0% 100%);
+            --card-foreground: hsl(222.2 84% 4.9%);
+            --popover: hsl(0 0% 100%);
+            --popover-foreground: hsl(222.2 84% 4.9%);
+            --primary: hsl(221.2 83.2% 53.3%);
+            --primary-foreground: hsl(210 40% 98%);
+            --secondary: hsl(210 40% 96%);
+            --secondary-foreground: hsl(222.2 84% 4.9%);
+            --muted: hsl(210 40% 96%);
+            --muted-foreground: hsl(215.4 16.3% 46.9%);
+            --accent: hsl(210 40% 96%);
+            --accent-foreground: hsl(222.2 84% 4.9%);
+            --destructive: hsl(0 84.2% 60.2%);
+            --destructive-foreground: hsl(210 40% 98%);
+            --border: hsl(214.3 31.8% 91.4%);
+            --input: hsl(214.3 31.8% 91.4%);
+            --ring: hsl(221.2 83.2% 53.3%);
+            --radius: 1rem;
+            --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: var(--font-sans);
+            background: var(--background);
+            color: var(--foreground);
+        }
+
+        .screen {
+            display: none;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+
+        .clothing-item {
+            transition: all 0.3s ease;
+        }
+
+        .clothing-item:hover {
+            transform: translateY(-2px);
+        }
+
+        .outfit-slot {
+            transition: all 0.3s ease;
+        }
+
+        .outfit-slot.selected {
+            transform: scale(1.02);
+        }
+
+        .filter-button {
+            transition: all 0.2s ease;
+        }
+
+        .nav-item {
+            transition: all 0.2s ease;
+        }
+
+        .floating-action {
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(221.2 83.2% 63.3%) 100%);
+        }
+
+        .card-shadow {
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .card-shadow-hover {
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        .outfit-preview {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-background text-foreground min-h-screen">
+    <div class="max-w-md mx-auto bg-background shadow-xl min-h-screen relative">
+        
+        <!-- @COMPONENT: Header [Dynamic header with current screen title] -->
+        <header class="bg-card border-b border-border px-6 py-4 sticky top-0 z-50">
+            <div class="flex items-center justify-between">
+                <h1 id="headerTitle" class="text-xl font-semibold text-foreground">Мой Гардероб</h1>
+                <div class="flex items-center space-x-3">
+                    <button class="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors">
+                        <i class="fas fa-search text-lg"></i>
+                    </button>
+                    <button class="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors">
+                        <i class="fas fa-cog text-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+        <!-- @END_COMPONENT: Header -->
+
+        <!-- @COMPONENT: WardrobeScreen [Main wardrobe view with clothing items] -->
+        <div id="wardrobeScreen" class="screen active pb-20">
+            <div class="p-6">
+                <!-- Upload Section -->
+                <div class="mb-6 p-6 bg-muted rounded-2xl">
+                    <h2 class="text-lg font-medium text-foreground mb-4">Загрузить одежду</h2>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button class="flex flex-col items-center justify-center p-4 border-2 border-dashed border-border rounded-xl text-muted-foreground hover:bg-accent hover:border-primary transition-all duration-300">
+                            <i class="fas fa-camera text-2xl mb-2"></i>
+                            <span class="text-sm font-medium">Сфотографировать</span>
+                        </button>
+                        <button class="flex flex-col items-center justify-center p-4 bg-primary/10 border border-primary/20 rounded-xl text-primary hover:bg-primary/20 transition-all duration-300">
+                            <i class="fas fa-upload text-2xl mb-2"></i>
+                            <span class="text-sm font-medium">Загрузить фото</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Category Filters -->
+                <div class="flex overflow-x-auto space-x-3 mb-6 pb-2">
+                    <button class="filter-button px-4 py-2 bg-primary text-primary-foreground rounded-full text-sm font-medium whitespace-nowrap">
+                        Всё
+                    </button>
+                    <button class="filter-button px-4 py-2 bg-muted text-muted-foreground hover:bg-accent rounded-full text-sm font-medium whitespace-nowrap">
+                        Верх
+                    </button>
+                    <button class="filter-button px-4 py-2 bg-muted text-muted-foreground hover:bg-accent rounded-full text-sm font-medium whitespace-nowrap">
+                        Низ
+                    </button>
+                    <button class="filter-button px-4 py-2 bg-muted text-muted-foreground hover:bg-accent rounded-full text-sm font-medium whitespace-nowrap">
+                        Обувь
+                    </button>
+                    <button class="filter-button px-4 py-2 bg-muted text-muted-foreground hover:bg-accent rounded-full text-sm font-medium whitespace-nowrap">
+                        Куртки
+                    </button>
+                    <button class="filter-button px-4 py-2 bg-muted text-muted-foreground hover:bg-accent rounded-full text-sm font-medium whitespace-nowrap">
+                        Аксессуары
+                    </button>
+                </div>
+
+                <!-- Clothing Grid -->
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Modern white shirt on model -->
+                    <div class="clothing-item bg-card rounded-2xl card-shadow hover:card-shadow-hover border border-border overflow-hidden">
+                        <div class="aspect-square bg-muted/50 relative">
+                            <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=800" 
+                                 alt="Белая рубашка" class="w-full h-full object-cover" />
+                            <div class="absolute top-2 right-2 bg-card/90 rounded-full p-1.5">
+                                <i class="fas fa-heart text-muted-foreground text-sm"></i>
+                            </div>
+                        </div>
+                        <div class="p-3">
+                            <p class="text-sm font-medium text-foreground">Белая рубашка</p>
+                            <p class="text-xs text-muted-foreground">Верх</p>
+                        </div>
+                    </div>
+
+                    <!-- Blue denim jeans -->
+                    <div class="clothing-item bg-card rounded-2xl card-shadow hover:card-shadow-hover border border-border overflow-hidden">
+                        <div class="aspect-square bg-muted/50 relative">
+                            <img src="https://images.unsplash.com/photo-1542272604-787c3835535d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=800" 
+                                 alt="Джинсы" class="w-full h-full object-cover" />
+                            <div class="absolute top-2 right-2 bg-card/90 rounded-full p-1.5">
+                                <i class="fas fa-heart text-destructive text-sm"></i>
+                            </div>
+                        </div>
+                        <div class="p-3">
+                            <p class="text-sm font-medium text-foreground">Синие джинсы</p>
+                            <p class="text-xs text-muted-foreground">Низ</p>
+                        </div>
+                    </div>
+
+                    <!-- White sneakers -->
+                    <div class="clothing-item bg-card rounded-2xl card-shadow hover:card-shadow-hover border border-border overflow-hidden">
+                        <div class="aspect-square bg-muted/50 relative">
+                            <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=800" 
+                                 alt="Белые кроссовки" class="w-full h-full object-cover" />
+                            <div class="absolute top-2 right-2 bg-card/90 rounded-full p-1.5">
+                                <i class="fas fa-heart text-muted-foreground text-sm"></i>
+                            </div>
+                        </div>
+                        <div class="p-3">
+                            <p class="text-sm font-medium text-foreground">Белые кроссовки</p>
+                            <p class="text-xs text-muted-foreground">Обувь</p>
+                        </div>
+                    </div>
+
+                    <!-- Black t-shirt -->
+                    <div class="clothing-item bg-card rounded-2xl card-shadow hover:card-shadow-hover border border-border overflow-hidden">
+                        <div class="aspect-square bg-muted/50 relative">
+                            <img src="https://pixabay.com/get/g02fbf93abc89476bb945b380aac1b99168fda2ecff0051d297152a22c1d331371849470e86c908947267e867b96218466ccc2131dd9f212b01799ba6f3060a37_1280.jpg" 
+                                 alt="Черная футболка" class="w-full h-full object-cover" />
+                            <div class="absolute top-2 right-2 bg-card/90 rounded-full p-1.5">
+                                <i class="fas fa-heart text-muted-foreground text-sm"></i>
+                            </div>
+                        </div>
+                        <div class="p-3">
+                            <p class="text-sm font-medium text-foreground">Черная футболка</p>
+                            <p class="text-xs text-muted-foreground">Верх</p>
+                        </div>
+                    </div>
+
+                    <!-- Watch accessory -->
+                    <div class="clothing-item bg-card rounded-2xl card-shadow hover:card-shadow-hover border border-border overflow-hidden">
+                        <div class="aspect-square bg-muted/50 relative">
+                            <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=800" 
+                                 alt="Серебряные часы" class="w-full h-full object-cover" />
+                            <div class="absolute top-2 right-2 bg-card/90 rounded-full p-1.5">
+                                <i class="fas fa-heart text-destructive text-sm"></i>
+                            </div>
+                        </div>
+                        <div class="p-3">
+                            <p class="text-sm font-medium text-foreground">Серебряные часы</p>
+                            <p class="text-xs text-muted-foreground">Аксессуары</p>
+                        </div>
+                    </div>
+
+                    <!-- Denim shorts -->
+                    <div class="clothing-item bg-card rounded-2xl card-shadow hover:card-shadow-hover border border-border overflow-hidden">
+                        <div class="aspect-square bg-muted/50 relative">
+                            <img src="https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=800" 
+                                 alt="Джинсовые шорты" class="w-full h-full object-cover" />
+                            <div class="absolute top-2 right-2 bg-card/90 rounded-full p-1.5">
+                                <i class="fas fa-heart text-muted-foreground text-sm"></i>
+                            </div>
+                        </div>
+                        <div class="p-3">
+                            <p class="text-sm font-medium text-foreground">Джинсовые шорты</p>
+                            <p class="text-xs text-muted-foreground">Низ</p>
+                        </div>
+                    </div>
+
+                    <!-- Baseball cap -->
+                    <div class="clothing-item bg-card rounded-2xl card-shadow hover:card-shadow-hover border border-border overflow-hidden">
+                        <div class="aspect-square bg-muted/50 relative">
+                            <img src="https://images.unsplash.com/photo-1588850561407-ed78c282e89b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=800" 
+                                 alt="Бейсболка" class="w-full h-full object-cover" />
+                            <div class="absolute top-2 right-2 bg-card/90 rounded-full p-1.5">
+                                <i class="fas fa-heart text-muted-foreground text-sm"></i>
+                            </div>
+                        </div>
+                        <div class="p-3">
+                            <p class="text-sm font-medium text-foreground">Бейсболка</p>
+                            <p class="text-xs text-muted-foreground">Головные уборы</p>
+                        </div>
+                    </div>
+
+                    <!-- Denim jacket -->
+                    <div class="clothing-item bg-card rounded-2xl card-shadow hover:card-shadow-hover border border-border overflow-hidden">
+                        <div class="aspect-square bg-muted/50 relative">
+                            <img src="https://pixabay.com/get/ga6e062eaa02e1d4837b10f868f67583d97bba24e97272b17f754aaddad22282fd92883b9d25464d5c8b021ffe0279114b3acd602d517fcac4addd5ab20956760_1280.jpg" 
+                                 alt="Джинсовая куртка" class="w-full h-full object-cover" />
+                            <div class="absolute top-2 right-2 bg-card/90 rounded-full p-1.5">
+                                <i class="fas fa-heart text-destructive text-sm"></i>
+                            </div>
+                        </div>
+                        <div class="p-3">
+                            <p class="text-sm font-medium text-foreground">Джинсовая куртка</p>
+                            <p class="text-xs text-muted-foreground">Куртки</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: WardrobeScreen -->
+
+        <!-- @COMPONENT: BuilderScreen [Outfit building interface] -->
+        <div id="builderScreen" class="screen pb-20">
+            <!-- Body Parameters Setup -->
+            <div id="bodyParamsStep" class="p-6">
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-user-cog text-primary text-2xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-semibold text-foreground mb-2">Параметры тела</h2>
+                    <p class="text-muted-foreground">Введите свои параметры для лучшего подбора одежды</p>
+                </div>
+
+                <div class="space-y-6 mb-8">
+                    <div>
+                        <label class="block text-sm font-medium text-foreground mb-2">Рост (см)</label>
+                        <input type="number" placeholder="170" 
+                               class="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-foreground mb-2">Вес (кг)</label>
+                        <input type="number" placeholder="65" 
+                               class="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-foreground mb-2">Размер</label>
+                        <select class="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                            <option value="">Выберите размер</option>
+                            <option value="XS">XS</option>
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button onclick="showBuilderStep()" 
+                        class="w-full py-4 gradient-bg text-primary-foreground font-semibold rounded-2xl transition-all duration-300 hover:scale-[1.02]">
+                    Продолжить
+                </button>
+            </div>
+
+            <!-- Outfit Builder Step -->
+            <div id="builderStep" class="hidden">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-semibold text-foreground">Создать образ</h2>
+                        <button onclick="showBodyParams()" class="p-2 bg-muted rounded-full hover:bg-accent transition-colors">
+                            <i class="fas fa-cog text-muted-foreground"></i>
+                        </button>
+                    </div>
+
+                    <!-- Outfit Preview -->
+                    <div class="outfit-preview rounded-2xl p-6 mb-6 relative overflow-hidden">
+                        <div class="text-center">
+                            <div class="w-32 h-48 bg-card rounded-2xl mx-auto flex items-center justify-center border-2 border-dashed border-border">
+                                <div class="text-center">
+                                    <i class="fas fa-user text-4xl text-muted-foreground mb-2"></i>
+                                    <p class="text-sm text-muted-foreground">Предварительный<br>просмотр образа</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="absolute top-4 right-4">
+                            <button class="p-2 bg-card/80 rounded-full hover:bg-card transition-colors">
+                                <i class="fas fa-camera text-muted-foreground"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Clothing Slots -->
+                    <div class="space-y-4 mb-8">
+                        <!-- Headwear Slot -->
+                        <div class="outfit-slot p-4 bg-card rounded-2xl border border-border hover:border-primary/50 transition-all cursor-pointer" onclick="selectClothingSlot('headwear')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-12 h-12 bg-muted rounded-lg flex items-center justify-center">
+                                        <span class="text-2xl">🧢</span>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-foreground">Головные уборы</p>
+                                        <p class="text-sm text-muted-foreground">Не выбрано</p>
+                                    </div>
+                                </div>
+                                <i class="fas fa-chevron-right text-muted-foreground"></i>
+                            </div>
+                        </div>
+
+                        <!-- Jacket Slot -->
+                        <div class="outfit-slot p-4 bg-card rounded-2xl border border-border hover:border-primary/50 transition-all cursor-pointer" onclick="selectClothingSlot('jacket')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-12 h-12 bg-muted rounded-lg flex items-center justify-center">
+                                        <span class="text-2xl">🧥</span>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-foreground">Куртки/Пиджаки</p>
+                                        <p class="text-sm text-muted-foreground">Не выбрано</p>
+                                    </div>
+                                </div>
+                                <i class="fas fa-chevron-right text-muted-foreground"></i>
+                            </div>
+                        </div>
+
+                        <!-- Top Slot -->
+                        <div class="outfit-slot p-4 bg-primary/10 border-2 border-primary rounded-2xl cursor-pointer selected" onclick="selectClothingSlot('top')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center">
+                                        <span class="text-2xl">👕</span>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-foreground">Верх</p>
+                                        <p class="text-sm text-primary">Белая рубашка</p>
+                                    </div>
+                                </div>
+                                <i class="fas fa-check text-primary"></i>
+                            </div>
+                        </div>
+
+                        <!-- Bottom Slot -->
+                        <div class="outfit-slot p-4 bg-card rounded-2xl border border-border hover:border-primary/50 transition-all cursor-pointer" onclick="selectClothingSlot('bottom')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-12 h-12 bg-muted rounded-lg flex items-center justify-center">
+                                        <span class="text-2xl">👖</span>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-foreground">Низ</p>
+                                        <p class="text-sm text-muted-foreground">Не выбрано</p>
+                                    </div>
+                                </div>
+                                <i class="fas fa-chevron-right text-muted-foreground"></i>
+                            </div>
+                        </div>
+
+                        <!-- Shoes Slot -->
+                        <div class="outfit-slot p-4 bg-card rounded-2xl border border-border hover:border-primary/50 transition-all cursor-pointer" onclick="selectClothingSlot('shoes')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-12 h-12 bg-muted rounded-lg flex items-center justify-center">
+                                        <span class="text-2xl">👟</span>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-foreground">Обувь</p>
+                                        <p class="text-sm text-muted-foreground">Не выбрано</p>
+                                    </div>
+                                </div>
+                                <i class="fas fa-chevron-right text-muted-foreground"></i>
+                            </div>
+                        </div>
+
+                        <!-- Accessories Slot -->
+                        <div class="outfit-slot p-4 bg-card rounded-2xl border border-border hover:border-primary/50 transition-all cursor-pointer" onclick="selectClothingSlot('accessory')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-12 h-12 bg-muted rounded-lg flex items-center justify-center">
+                                        <span class="text-2xl">⌚</span>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-foreground">Аксессуары</p>
+                                        <p class="text-sm text-muted-foreground">Не выбрано</p>
+                                    </div>
+                                </div>
+                                <i class="fas fa-chevron-right text-muted-foreground"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <button class="py-3 px-4 bg-muted text-muted-foreground rounded-xl font-medium hover:bg-accent transition-colors">
+                            Очистить
+                        </button>
+                        <button onclick="saveOutfit()" class="py-3 px-4 gradient-bg text-primary-foreground rounded-xl font-medium hover:scale-[1.02] transition-all">
+                            Сохранить образ
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clothing Selection Modal -->
+            <div id="clothingSelection" class="hidden fixed inset-0 bg-background z-50">
+                <div class="flex flex-col h-full">
+                    <div class="flex items-center justify-between p-6 border-b border-border">
+                        <h3 class="text-lg font-semibold text-foreground">Выберите верх</h3>
+                        <button onclick="closeClothingSelection()" class="p-2 hover:bg-muted rounded-lg transition-colors">
+                            <i class="fas fa-times text-muted-foreground"></i>
+                        </button>
+                    </div>
+                    <div class="flex-1 overflow-y-auto p-6">
+                        <div class="grid grid-cols-2 gap-4">
+                            <!-- Clothing items would be dynamically loaded here -->
+                            <div class="bg-card rounded-2xl overflow-hidden border border-border cursor-pointer hover:border-primary transition-colors">
+                                <div class="aspect-square bg-muted/50">
+                                    <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400" 
+                                         alt="Белая рубашка" class="w-full h-full object-cover" />
+                                </div>
+                                <div class="p-3">
+                                    <p class="text-sm font-medium text-foreground">Белая рубашка</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: BuilderScreen -->
+
+        <!-- @COMPONENT: OutfitsScreen [Saved outfits management] -->
+        <div id="outfitsScreen" class="screen pb-20">
+            <div class="p-6">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-3 gap-3 mb-6">
+                    <div class="bg-card rounded-2xl p-4 text-center border border-border">
+                        <div class="text-2xl font-bold text-primary">12</div>
+                        <div class="text-xs text-muted-foreground">Образов</div>
+                    </div>
+                    <div class="bg-card rounded-2xl p-4 text-center border border-border">
+                        <div class="text-2xl font-bold text-primary">24</div>
+                        <div class="text-xs text-muted-foreground">Вещей</div>
+                    </div>
+                    <div class="bg-card rounded-2xl p-4 text-center border border-border">
+                        <div class="text-2xl font-bold text-primary">3</div>
+                        <div class="text-xs text-muted-foreground">Категории</div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="flex space-x-3 mb-6">
+                    <button class="flex-1 py-3 bg-primary text-primary-foreground rounded-xl font-medium">
+                        <i class="fas fa-magic mr-2"></i>
+                        AI-генерация
+                    </button>
+                    <button class="flex-1 py-3 bg-muted text-muted-foreground rounded-xl font-medium">
+                        <i class="fas fa-random mr-2"></i>
+                        Случайный образ
+                    </button>
+                </div>
+
+                <!-- Outfit Categories -->
+                <div class="flex overflow-x-auto space-x-3 mb-6 pb-2">
+                    <button class="px-4 py-2 bg-primary text-primary-foreground rounded-full text-sm font-medium whitespace-nowrap">
+                        Все образы
+                    </button>
+                    <button class="px-4 py-2 bg-muted text-muted-foreground hover:bg-accent rounded-full text-sm font-medium whitespace-nowrap">
+                        Работа
+                    </button>
+                    <button class="px-4 py-2 bg-muted text-muted-foreground hover:bg-accent rounded-full text-sm font-medium whitespace-nowrap">
+                        Повседневное
+                    </button>
+                    <button class="px-4 py-2 bg-muted text-muted-foreground hover:bg-accent rounded-full text-sm font-medium whitespace-nowrap">
+                        Особое
+                    </button>
+                    <button class="px-4 py-2 bg-muted text-muted-foreground hover:bg-accent rounded-full text-sm font-medium whitespace-nowrap">
+                        Спорт
+                    </button>
+                </div>
+
+                <!-- Saved Outfits Grid -->
+                <div class="space-y-4">
+                    <!-- Casual Friday Outfit -->
+                    <div class="bg-card rounded-2xl overflow-hidden border border-border card-shadow hover:card-shadow-hover transition-all cursor-pointer">
+                        <div class="flex">
+                            <div class="w-32 h-32 bg-muted/50 relative">
+                                <!-- Outfit preview composite image showing person in the complete outfit -->
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&h=400" 
+                                     alt="Casual Friday Outfit" class="w-full h-full object-cover" />
+                                <div class="absolute bottom-2 right-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full">
+                                    3 вещи
+                                </div>
+                            </div>
+                            <div class="flex-1 p-4">
+                                <div class="flex items-start justify-between mb-2">
+                                    <div>
+                                        <h3 class="font-semibold text-foreground">Casual Friday</h3>
+                                        <p class="text-sm text-muted-foreground">Работа • 15 мар</p>
+                                    </div>
+                                    <button class="p-2 hover:bg-muted rounded-lg transition-colors">
+                                        <i class="fas fa-ellipsis-v text-muted-foreground"></i>
+                                    </button>
+                                </div>
+                                <div class="flex flex-wrap gap-1 mb-3">
+                                    <span class="px-2 py-1 bg-muted text-muted-foreground text-xs rounded-full">#casual</span>
+                                    <span class="px-2 py-1 bg-muted text-muted-foreground text-xs rounded-full">#work</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex space-x-2">
+                                        <button class="p-2 hover:bg-muted rounded-lg transition-colors">
+                                            <i class="fas fa-share text-muted-foreground text-sm"></i>
+                                        </button>
+                                        <button class="p-2 hover:bg-muted rounded-lg transition-colors">
+                                            <i class="fas fa-edit text-muted-foreground text-sm"></i>
+                                        </button>
+                                    </div>
+                                    <div class="flex -space-x-2">
+                                        <!-- Small thumbnails of individual clothing items -->
+                                        <div class="w-6 h-6 bg-muted rounded-full border-2 border-card overflow-hidden">
+                                            <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100" 
+                                                 alt="Shirt" class="w-full h-full object-cover" />
+                                        </div>
+                                        <div class="w-6 h-6 bg-muted rounded-full border-2 border-card overflow-hidden">
+                                            <img src="https://images.unsplash.com/photo-1542272604-787c3835535d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100" 
+                                                 alt="Jeans" class="w-full h-full object-cover" />
+                                        </div>
+                                        <div class="w-6 h-6 bg-muted rounded-full border-2 border-card overflow-hidden">
+                                            <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100" 
+                                                 alt="Sneakers" class="w-full h-full object-cover" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Weekend Chill Outfit -->
+                    <div class="bg-card rounded-2xl overflow-hidden border border-border card-shadow hover:card-shadow-hover transition-all cursor-pointer">
+                        <div class="flex">
+                            <div class="w-32 h-32 bg-muted/50 relative">
+                                <!-- Casual weekend outfit on model -->
+                                <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&h=400" 
+                                     alt="Weekend Chill Outfit" class="w-full h-full object-cover" />
+                                <div class="absolute bottom-2 right-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full">
+                                    3 вещи
+                                </div>
+                            </div>
+                            <div class="flex-1 p-4">
+                                <div class="flex items-start justify-between mb-2">
+                                    <div>
+                                        <h3 class="font-semibold text-foreground">Weekend Chill</h3>
+                                        <p class="text-sm text-muted-foreground">Повседневное • 14 мар</p>
+                                    </div>
+                                    <button class="p-2 hover:bg-muted rounded-lg transition-colors">
+                                        <i class="fas fa-ellipsis-v text-muted-foreground"></i>
+                                    </button>
+                                </div>
+                                <div class="flex flex-wrap gap-1 mb-3">
+                                    <span class="px-2 py-1 bg-muted text-muted-foreground text-xs rounded-full">#weekend</span>
+                                    <span class="px-2 py-1 bg-muted text-muted-foreground text-xs rounded-full">#relaxed</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex space-x-2">
+                                        <button class="p-2 hover:bg-muted rounded-lg transition-colors">
+                                            <i class="fas fa-share text-muted-foreground text-sm"></i>
+                                        </button>
+                                        <button class="p-2 hover:bg-muted rounded-lg transition-colors">
+                                            <i class="fas fa-edit text-muted-foreground text-sm"></i>
+                                        </button>
+                                    </div>
+                                    <div class="flex -space-x-2">
+                                        <div class="w-6 h-6 bg-muted rounded-full border-2 border-card overflow-hidden">
+                                            <img src="https://pixabay.com/get/g6e48d0725d3b7d9c26dc383a105e3d6f1919b516616f2ac9eba37474a1f76c836a9351d63041fd06ce65364be627a06fd639a0a02aa569d79e58ad1f815ac35c_1280.jpg" 
+                                                 alt="T-shirt" class="w-full h-full object-cover" />
+                                        </div>
+                                        <div class="w-6 h-6 bg-muted rounded-full border-2 border-card overflow-hidden">
+                                            <img src="https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100" 
+                                                 alt="Shorts" class="w-full h-full object-cover" />
+                                        </div>
+                                        <div class="w-6 h-6 bg-muted rounded-full border-2 border-card overflow-hidden">
+                                            <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100" 
+                                                 alt="Sneakers" class="w-full h-full object-cover" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Date Night Outfit -->
+                    <div class="bg-card rounded-2xl overflow-hidden border border-border card-shadow hover:card-shadow-hover transition-all cursor-pointer">
+                        <div class="flex">
+                            <div class="w-32 h-32 bg-muted/50 relative">
+                                <!-- Elegant date night outfit on model -->
+                                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&h=400" 
+                                     alt="Date Night Outfit" class="w-full h-full object-cover" />
+                                <div class="absolute bottom-2 right-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full">
+                                    4 вещи
+                                </div>
+                            </div>
+                            <div class="flex-1 p-4">
+                                <div class="flex items-start justify-between mb-2">
+                                    <div>
+                                        <h3 class="font-semibold text-foreground">Date Night</h3>
+                                        <p class="text-sm text-muted-foreground">Особое • 13 мар</p>
+                                    </div>
+                                    <button class="p-2 hover:bg-muted rounded-lg transition-colors">
+                                        <i class="fas fa-ellipsis-v text-muted-foreground"></i>
+                                    </button>
+                                </div>
+                                <div class="flex flex-wrap gap-1 mb-3">
+                                    <span class="px-2 py-1 bg-muted text-muted-foreground text-xs rounded-full">#date</span>
+                                    <span class="px-2 py-1 bg-muted text-muted-foreground text-xs rounded-full">#evening</span>
+                                    <span class="px-2 py-1 bg-muted text-muted-foreground text-xs rounded-full">#stylish</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex space-x-2">
+                                        <button class="p-2 hover:bg-muted rounded-lg transition-colors">
+                                            <i class="fas fa-share text-muted-foreground text-sm"></i>
+                                        </button>
+                                        <button class="p-2 hover:bg-muted rounded-lg transition-colors">
+                                            <i class="fas fa-edit text-muted-foreground text-sm"></i>
+                                        </button>
+                                    </div>
+                                    <div class="flex -space-x-2">
+                                        <div class="w-6 h-6 bg-muted rounded-full border-2 border-card overflow-hidden">
+                                            <img src="https://pixabay.com/get/g6e48d0725d3b7d9c26dc383a105e3d6f1919b516616f2ac9eba37474a1f76c836a9351d63041fd06ce65364be627a06fd639a0a02aa569d79e58ad1f815ac35c_1280.jpg" 
+                                                 alt="Jacket" class="w-full h-full object-cover" />
+                                        </div>
+                                        <div class="w-6 h-6 bg-muted rounded-full border-2 border-card overflow-hidden">
+                                            <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100" 
+                                                 alt="Shirt" class="w-full h-full object-cover" />
+                                        </div>
+                                        <div class="w-6 h-6 bg-muted rounded-full border-2 border-card overflow-hidden">
+                                            <img src="https://images.unsplash.com/photo-1542272604-787c3835535d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100" 
+                                                 alt="Jeans" class="w-full h-full object-cover" />
+                                        </div>
+                                        <div class="w-6 h-6 bg-muted rounded-full border-2 border-card overflow-hidden">
+                                            <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100" 
+                                                 alt="Watch" class="w-full h-full object-cover" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: OutfitsScreen -->
+
+        <!-- @COMPONENT: BottomNavigation [Main app navigation] -->
+        <nav class="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-card border-t border-border">
+            <div class="flex justify-around py-3">
+                <button onclick="switchScreen('wardrobe')" class="nav-item flex flex-col items-center space-y-1 py-2 px-4 text-primary" data-screen="wardrobe">
+                    <i class="fas fa-home text-xl"></i>
+                    <span class="text-xs font-medium">Гардероб</span>
+                </button>
+                <button onclick="switchScreen('builder')" class="nav-item flex flex-col items-center space-y-1 py-2 px-4 text-muted-foreground hover:text-foreground" data-screen="builder">
+                    <i class="fas fa-tshirt text-xl"></i>
+                    <span class="text-xs font-medium">Конструктор</span>
+                </button>
+                <button onclick="switchScreen('outfits')" class="nav-item flex flex-col items-center space-y-1 py-2 px-4 text-muted-foreground hover:text-foreground" data-screen="outfits">
+                    <i class="fas fa-folder text-xl"></i>
+                    <span class="text-xs font-medium">Образы</span>
+                </button>
+            </div>
+        </nav>
+        <!-- @END_COMPONENT: BottomNavigation -->
+
+        <!-- @COMPONENT: FloatingActionButton [Quick add button] -->
+        <button class="floating-action fixed bottom-20 right-6 w-14 h-14 gradient-bg text-primary-foreground rounded-full flex items-center justify-center hover:scale-110 transition-all duration-300">
+            <i class="fas fa-plus text-xl"></i>
+        </button>
+        <!-- @END_COMPONENT: FloatingActionButton -->
+    </div>
+
+    <script>
+        // TODO: Implement state management, API calls, and business logic
+        (function() {
+            let currentScreen = 'wardrobe';
+            let currentStep = 'body';
+
+            const screenTitles = {
+                'wardrobe': 'Мой Гардероб',
+                'builder': 'Конструктор образов',
+                'outfits': 'Мои образы'
+            };
+
+            function switchScreen(screenId) {
+                // Hide all screens
+                document.querySelectorAll('.screen').forEach(screen => {
+                    screen.classList.remove('active');
+                });
+                
+                // Show selected screen
+                document.getElementById(screenId + 'Screen').classList.add('active');
+                
+                // Update navigation
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('text-primary');
+                    item.classList.add('text-muted-foreground', 'hover:text-foreground');
+                });
+                
+                document.querySelector(`[data-screen="${screenId}"]`).classList.remove('text-muted-foreground', 'hover:text-foreground');
+                document.querySelector(`[data-screen="${screenId}"]`).classList.add('text-primary');
+                
+                // Update header title
+                document.getElementById('headerTitle').textContent = screenTitles[screenId];
+                
+                currentScreen = screenId;
+
+                // Reset builder screen to body params if switching to builder
+                if (screenId === 'builder') {
+                    showBodyParams();
+                }
+            }
+
+            function showBuilderStep() {
+                document.getElementById('bodyParamsStep').classList.add('hidden');
+                document.getElementById('builderStep').classList.remove('hidden');
+                currentStep = 'build';
+            }
+
+            function showBodyParams() {
+                document.getElementById('bodyParamsStep').classList.remove('hidden');
+                document.getElementById('builderStep').classList.add('hidden');
+                currentStep = 'body';
+            }
+
+            function selectClothingSlot(slotType) {
+                // Show clothing selection modal
+                document.getElementById('clothingSelection').classList.remove('hidden');
+                // TODO: Filter clothing items by slot type and populate grid
+            }
+
+            function closeClothingSelection() {
+                document.getElementById('clothingSelection').classList.add('hidden');
+            }
+
+            function saveOutfit() {
+                // TODO: Implement outfit saving logic
+                alert('Образ сохранен!');
+                switchScreen('outfits');
+            }
+
+            // Expose functions to global scope for onclick handlers
+            window.switchScreen = switchScreen;
+            window.showBuilderStep = showBuilderStep;
+            window.showBodyParams = showBodyParams;
+            window.selectClothingSlot = selectClothingSlot;
+            window.closeClothingSelection = closeClothingSelection;
+            window.saveOutfit = saveOutfit;
+
+            // Filter functionality for wardrobe
+            document.addEventListener('DOMContentLoaded', function() {
+                const filterButtons = document.querySelectorAll('.filter-button');
+                filterButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        // Remove active state from all buttons
+                        filterButtons.forEach(btn => {
+                            btn.classList.remove('bg-primary', 'text-primary-foreground');
+                            btn.classList.add('bg-muted', 'text-muted-foreground', 'hover:bg-accent');
+                        });
+                        
+                        // Add active state to clicked button
+                        this.classList.remove('bg-muted', 'text-muted-foreground', 'hover:bg-accent');
+                        this.classList.add('bg-primary', 'text-primary-foreground');
+                        
+                        // TODO: Implement actual filtering logic
+                    });
+                });
+            });
+        })();
+    </script>
+</body>
+</html>
