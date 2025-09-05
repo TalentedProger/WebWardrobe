@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { Camera, Upload, Search, Settings } from "lucide-react";
 import { queryClient } from "@/lib/queryClient";
 import { apiRequest } from "@/lib/queryClient";
@@ -18,6 +19,7 @@ const categories = [
 
 export default function WardrobePage() {
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [, setLocation] = useLocation();
 
   const { data: clothingItems = [], isLoading } = useQuery<ClothingItemType[]>({
     queryKey: ["/api/clothing-items", selectedCategory === "all" ? "" : `?type=${selectedCategory}`],
@@ -73,7 +75,7 @@ export default function WardrobePage() {
           <h2 className="text-lg font-medium text-white mb-4">Загрузить одежду</h2>
           <div className="grid grid-cols-2 gap-3">
             <button 
-              onClick={handleAddItem}
+              onClick={() => setLocation('/add-item')}
               className="flex flex-col items-center justify-center p-4 bg-white/20 border border-white/60 rounded-xl text-white hover:bg-white/30 transition-all duration-300"
               data-testid="button-camera"
               style={{borderColor: 'white'}}
@@ -82,7 +84,7 @@ export default function WardrobePage() {
               <span className="text-sm font-medium">Сфотографировать</span>
             </button>
             <button 
-              onClick={handleAddItem}
+              onClick={() => setLocation('/add-item')}
               className="flex flex-col items-center justify-center p-4 bg-white/20 border border-white/60 rounded-xl text-white hover:bg-white/30 transition-all duration-300"
               data-testid="button-upload"
               style={{borderColor: 'white'}}

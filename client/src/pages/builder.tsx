@@ -517,7 +517,7 @@ export default function BuilderPage() {
               style={{backgroundColor: '#112250'}}
               data-testid="button-to-outfits"
             >
-              К образам
+              Перейти к образам
             </button>
             <button
               onClick={() => {/* Handle AI generation */}}

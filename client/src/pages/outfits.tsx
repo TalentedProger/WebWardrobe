@@ -7,6 +7,7 @@ import type { Outfit, ClothingItem } from "@shared/schema";
 
 const categories = [
   { id: "all", label: "Все образы" },
+  { id: "favorites", label: "Избранное ❤️" },
   { id: "Work", label: "Работа" },
   { id: "Casual", label: "Повседневное" },
   { id: "Special", label: "Особое" },
@@ -134,32 +135,44 @@ export default function OutfitsPage() {
             >
               <ArrowLeft size={20} />
             </button>
-            <button 
-              onClick={() => setShowActionsModal(true)}
-              className="p-2 rounded-full hover:bg-accent transition-colors"
-              style={{backgroundColor: '#E0C58F'}}
-              data-testid="button-more-actions"
-            >
-              <MoreHorizontal size={20} />
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  // Handle favorite toggle
+                }}
+                className="favorite-button rounded-full p-2"
+                data-testid={`button-favorite-outfit-${selectedOutfit.id}`}
+              >
+                <Heart size={16} className="favorite-icon-inactive" />
+              </button>
+              <button 
+                onClick={() => setShowActionsModal(true)}
+                className="p-2 rounded-full hover:bg-accent transition-colors"
+                style={{backgroundColor: '#E0C58F'}}
+                data-testid="button-more-actions"
+              >
+                <MoreHorizontal size={20} />
+              </button>
+            </div>
           </div>
         </header>
 
         <div className="p-6">
           {/* Outfit Title */}
-          <h1 className="text-xl font-bold text-center text-foreground mb-6">{selectedOutfit.name}</h1>
+          <h1 className="text-2xl font-extrabold text-center text-foreground mb-6">{selectedOutfit.name}</h1>
           
           {/* Outfit Parameters */}
           <div className="text-left mb-6">
             <div className="space-y-2">
               <div className="text-sm text-foreground">
-                <span className="font-medium">Категория:</span> {selectedOutfit.category || 'Не указано'}
+                <span className="font-bold">Категория:</span> {selectedOutfit.category || 'Не указано'}
               </div>
               <div className="text-sm text-foreground">
-                <span className="font-medium">Стиль:</span> {selectedOutfit.style || 'Не указан'}
+                <span className="font-bold">Стиль:</span> {selectedOutfit.style || 'Не указан'}
               </div>
               <div className="text-sm text-foreground">
-                <span className="font-medium">Сезон:</span> {getSeason(selectedOutfit.season)}
+                <span className="font-bold">Сезон:</span> {getSeason(selectedOutfit.season)}
               </div>
             </div>
           </div>
@@ -323,7 +336,7 @@ export default function OutfitsPage() {
             <button
               key={category.id}
               onClick={() => setSelectedCategory(category.id)}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+              className={`px-4 py-2 rounded-full text-sm ${category.id === 'favorites' ? 'font-bold' : 'font-medium'} whitespace-nowrap transition-colors ${
                 selectedCategory === category.id
                   ? "text-white" 
                   : "category-button-inactive hover:opacity-80"
@@ -348,39 +361,28 @@ export default function OutfitsPage() {
         ) : (
           <div className="grid grid-cols-2 gap-4">
             {filteredOutfits.map((outfit) => (
-              <div key={outfit.id} className="relative">
-                <button
-                  onClick={() => {
-                    setSelectedOutfit(outfit);
-                    // Initialize edited outfit with current items
-                    const outfitItems: Record<string, ClothingItem | null> = {};
-                    Object.entries(outfit.items).forEach(([slot, itemId]) => {
-                      const item = clothingItems.find(ci => ci.id === itemId) || null;
-                      outfitItems[slot] = item;
-                    });
-                    setEditedOutfit(outfitItems);
-                    setHasChanges(false);
-                  }}
-                  className="aspect-[3/4] rounded-2xl overflow-hidden bg-muted border-0 hover:scale-105 transition-transform duration-200 w-full"
-                  data-testid={`outfit-tile-${outfit.id}`}
-                >
-                  <img
-                    src={getOutfitCover(outfit)}
-                    alt={outfit.name}
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    // Handle favorite toggle
-                  }}
-                  className="absolute top-2 right-2 favorite-button rounded-full p-1.5"
-                  data-testid={`button-favorite-outfit-${outfit.id}`}
-                >
-                  <Heart size={14} className="favorite-icon-inactive" />
-                </button>
-              </div>
+              <button
+                key={outfit.id}
+                onClick={() => {
+                  setSelectedOutfit(outfit);
+                  // Initialize edited outfit with current items
+                  const outfitItems: Record<string, ClothingItem | null> = {};
+                  Object.entries(outfit.items).forEach(([slot, itemId]) => {
+                    const item = clothingItems.find(ci => ci.id === itemId) || null;
+                    outfitItems[slot] = item;
+                  });
+                  setEditedOutfit(outfitItems);
+                  setHasChanges(false);
+                }}
+                className="aspect-[3/4] rounded-2xl overflow-hidden bg-muted border-0 hover:scale-105 transition-transform duration-200 w-full"
+                data-testid={`outfit-tile-${outfit.id}`}
+              >
+                <img
+                  src={getOutfitCover(outfit)}
+                  alt={outfit.name}
+                  className="w-full h-full object-cover"
+                />
+              </button>
             ))}
           </div>
         )}

@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import WardrobePage from "@/pages/wardrobe";
 import BuilderPage from "@/pages/builder";
 import OutfitsPage from "@/pages/outfits";
+import AddItemPage from "@/pages/add-item";
 import Navigation from "@/components/navigation";
 
 function Router() {
@@ -27,6 +28,7 @@ function Router() {
         <Route path="/wardrobe" component={WardrobePage} />
         <Route path="/builder" component={BuilderPage} />
         <Route path="/outfits" component={OutfitsPage} />
+        <Route path="/add-item" component={AddItemPage} />
       </Switch>
 
       <Navigation />
