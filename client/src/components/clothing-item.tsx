@@ -52,12 +52,12 @@ export default function ClothingItem({ item, onSelect, onDelete }: ClothingItemP
         <div className="absolute top-2 right-2 flex space-x-1">
           <button
             onClick={handleHeartClick}
-            className="glass-button rounded-full p-1.5"
+            className="favorite-button rounded-full p-1.5"
             data-testid={`button-favorite-${item.id}`}
           >
             <Heart 
               size={14} 
-              className={isFavorite ? "text-red-500 fill-current" : "text-muted-foreground"} 
+              className={isFavorite ? "text-red-500 fill-current" : "favorite-icon-inactive"} 
             />
           </button>
           {onDelete && (

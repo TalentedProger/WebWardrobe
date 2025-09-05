@@ -133,12 +133,11 @@
 /* Enhanced custom animations and transitions */
 .clothing-item {
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  transform: perspective(1000px) rotateX(0deg);
+  box-shadow: none;
 }
 
 .clothing-item:hover {
-  transform: perspective(1000px) rotateX(5deg) translateY(-8px);
-  box-shadow: 0 20px 40px rgba(31, 38, 135, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 .outfit-slot {
@@ -207,15 +206,14 @@
   background: var(--glass-bg);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--glass-border);
+  border: none;
   border-radius: 4px;
-  transition: all 0.3s ease;
+  transition: all 0.6s ease;
 }
 
 .glass-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: hsla(0, 0%, 0%, 0.2);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  border-color: hsla(0, 0%, 0%, 0.3);
+  background: white;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
 }
 
 .nav-item {
@@ -230,6 +228,22 @@
 .nav-item.active {
   background: hsla(23, 21%, 83%, 0.4); /* #D9CBC2 with transparency */
   border: 1px solid hsla(23, 21%, 83%, 0.6);
+}
+
+/* Inactive category button styles */
+.category-button-inactive {
+  color: #112250;
+}
+
+/* Favorite button styles */
+.favorite-button {
+  background: white;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.favorite-icon-inactive {
+  color: #ef4444;
 }
 
 .floating-action {

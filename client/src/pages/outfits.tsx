@@ -119,14 +119,15 @@ export default function OutfitsPage() {
                 setHasChanges(false);
                 setEditedOutfit({});
               }}
-              className="p-2 rounded-full bg-muted hover:bg-accent transition-colors"
+              className="p-2 rounded-full hover:bg-accent transition-colors"
               data-testid="button-back-to-outfits"
             >
               <ArrowLeft size={20} />
             </button>
             <button 
               onClick={() => setShowActionsModal(true)}
-              className="p-2 rounded-full bg-muted hover:bg-accent transition-colors"
+              className="p-2 rounded-full hover:bg-accent transition-colors"
+              style={{backgroundColor: '#E0C58F'}}
               data-testid="button-more-actions"
             >
               <MoreHorizontal size={20} />
@@ -175,26 +176,27 @@ export default function OutfitsPage() {
 
           {/* Items Carousel */}
           <div className="mb-6">
-            <h3 className="text-lg font-semibold text-foreground mb-4">Элементы образа</h3>
+            <h3 className="text-lg font-bold text-foreground mb-4">Элементы образа</h3>
             <div className="flex gap-4 overflow-x-auto pb-2">
               {outfitItems.map(({ slot, item }) => (
                 <div key={slot} className="flex-shrink-0">
-                  <div className="text-xs text-muted-foreground mb-2 text-center">{slot}</div>
                   <button
                     onClick={() => {/* Open item selection modal */}}
-                    className="w-20 h-20 rounded-xl border-2 border-dashed border-border hover:border-primary/50 flex items-center justify-center transition-colors"
+                    className="w-24 h-24 rounded-xl border-0 flex items-center justify-center transition-colors"
+                    style={{boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'}}
                     data-testid={`carousel-item-${slot}`}
                   >
                     {item ? (
                       <img
                         src={item.imageUrl}
                         alt={item.name}
-                        className="w-full h-full object-cover rounded-lg"
+                        className="w-full h-full object-cover rounded-xl"
                       />
                     ) : (
                       <Plus size={16} className="text-muted-foreground" />
                     )}
                   </button>
+                  <div className="text-xs font-semibold text-foreground mt-2 text-center">{slot}</div>
                 </div>
               ))}
             </div>
@@ -296,7 +298,7 @@ export default function OutfitsPage() {
               className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
                 selectedCategory === category.id
                   ? "text-white" 
-                  : "text-muted-foreground hover:opacity-80"
+                  : "category-button-inactive hover:opacity-80"
               }`}
               style={{
                 backgroundColor: selectedCategory === category.id ? '#112250' : '#E0C58F'

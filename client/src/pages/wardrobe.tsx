@@ -102,7 +102,7 @@ export default function WardrobePage() {
               className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors duration-200 ${
                 selectedCategory === category.id
                   ? "text-white" 
-                  : "text-muted-foreground hover:opacity-80"
+                  : "category-button-inactive hover:opacity-80"
               }`}
               style={{
                 backgroundColor: selectedCategory === category.id ? '#112250' : '#E0C58F'

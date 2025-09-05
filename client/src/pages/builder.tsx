@@ -40,6 +40,8 @@ export default function BuilderPage() {
   const [selectedBackground, setSelectedBackground] = useState(backgroundOptions[0]);
   const [itemScales, setItemScales] = useState<Record<string, number>>({});
   const [itemPositions, setItemPositions] = useState<Record<string, { x: number; y: number }>>({});
+  const [customCategory, setCustomCategory] = useState("");
+  const [isEditingCategory, setIsEditingCategory] = useState(false);
 
 
   const { data: clothingItems = [] } = useQuery<ClothingItemType[]>({
@@ -131,7 +133,7 @@ export default function BuilderPage() {
           </div>
 
           {/* Accessory Plus Button */}
-          <div className="flex justify-center mb-8">
+          <div className="flex justify-center mb-4">
             <button
               onClick={() => setActiveSlot('accessory')}
               className="flex items-center gap-2 px-4 py-2 bg-muted/50 rounded-full border border-border hover:border-primary/50 transition-all duration-200"
@@ -141,6 +143,19 @@ export default function BuilderPage() {
               <span className="text-sm text-muted-foreground">Добавить аксессуар</span>
             </button>
           </div>
+          
+          {/* Added Accessories Display */}
+          {currentOutfit.accessory && (
+            <div className="flex justify-center mb-8">
+              <div className="w-20 h-20 rounded-2xl bg-muted/50 border-2 border-solid border-border flex items-center justify-center relative">
+                <img
+                  src={currentOutfit.accessory.imageUrl}
+                  alt={currentOutfit.accessory.name}
+                  className="w-full h-full object-cover rounded-xl"
+                />
+              </div>
+            </div>
+          )}
 
           {/* Action Buttons */}
           <div className="grid grid-cols-2 gap-3">
@@ -331,12 +346,44 @@ export default function BuilderPage() {
                 data-testid="input-outfit-name"
               />
               
-              <select className="w-full p-3 border border-border rounded-xl bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50" data-testid="select-category">
-                <option value="new">Новая категория</option>
-                <option value="work">Работа</option>
-                <option value="casual">Повседневное</option>
-                <option value="sport">Спорт</option>
-              </select>
+              {isEditingCategory ? (
+                <input
+                  type="text"
+                  value={customCategory}
+                  onChange={(e) => setCustomCategory(e.target.value)}
+                  onBlur={() => {
+                    if (customCategory.trim()) {
+                      setIsEditingCategory(false);
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && customCategory.trim()) {
+                      setIsEditingCategory(false);
+                    }
+                  }}
+                  placeholder="Введите название категории"
+                  className="w-full p-3 border border-border rounded-xl bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  autoFocus
+                  data-testid="input-custom-category"
+                />
+              ) : (
+                <select 
+                  className="w-full p-3 border border-border rounded-xl bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50" 
+                  data-testid="select-category"
+                  onChange={(e) => {
+                    if (e.target.value === 'new') {
+                      setIsEditingCategory(true);
+                      setCustomCategory('');
+                    }
+                  }}
+                >
+                  <option value="work">Работа</option>
+                  <option value="casual">Повседневное</option>
+                  <option value="sport">Спорт</option>
+                  <option value="new">Новая категория</option>
+                  {customCategory && <option value={customCategory}>{customCategory}</option>}
+                </select>
+              )}
             </div>
           </div>
 
@@ -385,10 +432,10 @@ export default function BuilderPage() {
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4" style={{boxShadow: '0 8px 24px rgba(34, 197, 94, 0.3)'}}>
               <Check size={32} className="text-green-600" />
             </div>
-            <h2 className="text-2xl font-light text-foreground mb-6">Образ готов!</h2>
+            <h2 className="text-3xl font-bold text-foreground mb-6">Ваш образ готов!</h2>
             
             {/* Generated Outfit Image */}
-            <div className="w-48 mx-auto mb-8">
+            <div className="w-full max-w-sm mx-auto mb-8">
               <div 
                 className="w-full bg-cover bg-center rounded-2xl relative overflow-hidden border-2 border-border"
                 style={{ 
@@ -428,41 +475,37 @@ export default function BuilderPage() {
             </div>
           </div>
 
-          <div className="space-y-4">
-            {/* Top Row Buttons */}
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                onClick={() => {
-                  setCurrentStep("build");
-                  setCurrentOutfit({
-                    headwear: null,
-                    jacket: null,
-                    top: null,
-                    bottom: null,
-                    shoes: null,
-                    accessory: null,
-                  });
-                }}
-                className="py-3 px-4 text-white rounded-xl font-medium hover:opacity-90 transition-colors"
-                style={{backgroundColor: '#E0C58F'}}
-                data-testid="button-create-new"
-              >
-                Создать новый
-              </button>
-              <button
-                onClick={() => window.location.href = '/outfits'}
-                className="py-3 px-4 text-white rounded-xl font-medium hover:opacity-90 transition-colors"
-                style={{backgroundColor: '#112250'}}
-                data-testid="button-to-outfits"
-              >
-                К образам
-              </button>
-            </div>
-            
-            {/* AI Generation Button */}
+          <div className="space-y-3">
+            {/* All Buttons in Column */}
+            <button
+              onClick={() => {
+                setCurrentStep("build");
+                setCurrentOutfit({
+                  headwear: null,
+                  jacket: null,
+                  top: null,
+                  bottom: null,
+                  shoes: null,
+                  accessory: null,
+                });
+              }}
+              className="w-full py-3 px-4 text-white rounded-xl font-medium hover:opacity-90 transition-colors"
+              style={{backgroundColor: '#E0C58F'}}
+              data-testid="button-create-new"
+            >
+              Создать новый
+            </button>
+            <button
+              onClick={() => window.location.href = '/outfits'}
+              className="w-full py-3 px-4 text-white rounded-xl font-medium hover:opacity-90 transition-colors"
+              style={{backgroundColor: '#112250'}}
+              data-testid="button-to-outfits"
+            >
+              К образам
+            </button>
             <button
               onClick={() => {/* Handle AI generation */}}
-              className="w-full py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-2xl hover:from-purple-600 hover:to-pink-600 transition-all"
+              className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all"
               data-testid="button-ai-generate-final"
             >
               <Sparkles size={16} className="inline mr-2" />
