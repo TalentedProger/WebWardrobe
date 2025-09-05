@@ -111,7 +111,7 @@ export default function OutfitsPage() {
     
     return (
       <div className="flex-1 bg-background pb-20">
-        <header className="bg-card border-b border-border px-6 py-4 sticky top-14 z-50">
+        <header className="border-b border-border px-6 py-4 sticky top-14 z-50">
           <div className="flex items-center justify-between">
             <button
               onClick={() => {
@@ -271,7 +271,7 @@ export default function OutfitsPage() {
 
   return (
     <div className="flex-1 bg-background pb-20">
-      <header className="bg-card border-b border-border px-6 py-4 sticky top-14 z-50">
+      <header className="border-b border-border px-6 py-4 sticky top-14 z-50">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-semibold text-foreground">Образы</h1>
           <button 
@@ -288,16 +288,19 @@ export default function OutfitsPage() {
       <div className="p-6">
 
         {/* Category Filters */}
-        <div className="flex overflow-x-auto space-x-3 mb-6 pb-2">
+        <div className="flex overflow-x-auto space-x-3 mb-6 pb-2 p-3 rounded-2xl glass-card">
           {categories.map((category) => (
             <button
               key={category.id}
               onClick={() => setSelectedCategory(category.id)}
               className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
                 selectedCategory === category.id
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground hover:bg-accent"
+                  ? "text-white" 
+                  : "text-muted-foreground hover:opacity-80"
               }`}
+              style={{
+                backgroundColor: selectedCategory === category.id ? '#112250' : '#E0C58F'
+              }}
               data-testid={`category-${category.id}`}
             >
               {category.label}

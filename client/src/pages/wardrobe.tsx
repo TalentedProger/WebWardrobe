@@ -94,16 +94,19 @@ export default function WardrobePage() {
         </div>
 
         {/* Category Filters */}
-        <div className="flex overflow-x-auto space-x-3 mb-6 pb-2">
+        <div className="flex overflow-x-auto space-x-3 mb-6 pb-2 p-3 rounded-2xl glass-card">
           {categories.map((category) => (
             <button
               key={category.id}
               onClick={() => setSelectedCategory(category.id)}
               className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors duration-200 ${
                 selectedCategory === category.id
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground hover:bg-accent"
+                  ? "text-white" 
+                  : "text-muted-foreground hover:opacity-80"
               }`}
+              style={{
+                backgroundColor: selectedCategory === category.id ? '#112250' : '#E0C58F'
+              }}
               data-testid={`filter-${category.id}`}
             >
               {category.label}

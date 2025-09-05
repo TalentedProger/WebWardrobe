@@ -92,7 +92,7 @@ export default function BuilderPage() {
   if (currentStep === "build") {
     return (
       <div className="flex-1 bg-background pb-20">
-        <header className="bg-card border-b border-border px-6 py-4 sticky top-14 z-50">
+        <header className="border-b border-border px-6 py-4 sticky top-14 z-50">
           <h1 className="text-xl font-semibold text-foreground">Создать образ</h1>
         </header>
 
@@ -219,7 +219,7 @@ export default function BuilderPage() {
     
     return (
       <div className="flex-1 bg-background pb-20">
-        <header className="bg-card border-b border-border px-6 py-4 sticky top-14 z-50">
+        <header className="border-b border-border px-6 py-4 sticky top-14 z-50">
           <div className="flex items-center">
             <button
               onClick={() => setCurrentStep("build")}
@@ -343,7 +343,7 @@ export default function BuilderPage() {
   if (currentStep === "complete") {
     return (
       <div className="flex-1 bg-background pb-20">
-        <header className="bg-card border-b border-border px-6 py-4 sticky top-14 z-50">
+        <header className="border-b border-border px-6 py-4 sticky top-14 z-50">
           <div className="flex items-center">
             <button
               onClick={() => setCurrentStep("build")}
