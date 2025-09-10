@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Check, X, User, ArrowLeft, Plus, Settings, Sparkles, Crown, Shirt, Zap as Pants, Footprints, Gem } from "lucide-react";
+import { Check, X, User, ArrowLeft, Plus, Settings, Sparkles, Crown, Shirt, Zap as Pants, Footprints, Gem, ChevronLeft, ChevronRight } from "lucide-react";
 import { queryClient } from "@/lib/queryClient";
 import { apiRequest } from "@/lib/queryClient";
 import ClothingItem from "@/components/clothing-item";
@@ -110,6 +110,9 @@ export default function BuilderPage() {
     if (items.length > 0) {
       setSelectedItemInModal(items[0]);
       setCurrentSwipeIndex(0);
+    } else {
+      setSelectedItemInModal(null);
+      setCurrentSwipeIndex(0);
     }
   };
 
@@ -117,8 +120,20 @@ export default function BuilderPage() {
     setAccessories(prev => prev.filter((_, i) => i !== index));
   };
 
-  const filteredItemsForSlot = (slotKey: string) =>
-    clothingItems.filter(item => item.type === slotKey);
+  // Mapping between slot keys and clothing item types
+  const slotTypeMapping: Record<string, string[]> = {
+    'headwear': ['headwear', 'hat', 'cap', 'beanie'],
+    'jacket': ['jacket', 'blazer', 'coat', 'cardigan'],
+    'top': ['top', 'shirt', 'blouse', 't-shirt', 'sweater'],
+    'bottom': ['bottom', 'pants', 'jeans', 'shorts', 'skirt'],
+    'shoes': ['shoes', 'sneakers', 'boots', 'sandals'],
+    'accessory': ['accessory', 'jewelry', 'bag', 'watch', 'belt']
+  };
+
+  const filteredItemsForSlot = (slotKey: string) => {
+    const allowedTypes = slotTypeMapping[slotKey] || [slotKey];
+    return clothingItems.filter(item => allowedTypes.includes(item.type));
+  };
 
 
   if (currentStep === "build") {
@@ -287,78 +302,160 @@ export default function BuilderPage() {
 
             {/* Category Title - Top Center */}
             <div className="flex justify-center pt-20 pb-8">
-              <h2 className="text-3xl font-bold text-white text-center">
+              <h2 className="text-3xl font-bold text-black text-center">
                 {clothingSlots.find(s => s.key === activeSlot)?.name}
               </h2>
             </div>
 
-            {/* Horizontal Swiper */}
+            {/* Three Items Display - Center Layout */}
             <div className="flex-1 flex items-center justify-center px-6">
               {filteredItemsForSlot(activeSlot).length > 0 ? (
-                <div className="w-full">
-                  <div 
-                    className="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory"
-                    style={{
-                      scrollbarWidth: 'none',
-                      msOverflowStyle: 'none',
-                      WebkitScrollbarDisplay: 'none'
-                    }}
-                    onScroll={(e) => {
-                      const scrollLeft = e.currentTarget.scrollLeft;
-                      const itemWidth = 280; // 256px + 24px gap
-                      const newIndex = Math.round(scrollLeft / itemWidth);
-                      setCurrentSwipeIndex(newIndex);
-                      setSelectedItemInModal(filteredItemsForSlot(activeSlot)[newIndex] || null);
-                    }}
-                  >
-                    {filteredItemsForSlot(activeSlot).map((item, index) => {
-                      const isActive = index === currentSwipeIndex;
-                      return (
+                <div className="w-full max-w-4xl">
+                  <div className="flex items-center justify-center gap-8">
+                    {/* Navigation Buttons and Items */}
+                    <div className="flex items-center gap-6">
+                      {/* Left Item */}
+                      {filteredItemsForSlot(activeSlot)[currentSwipeIndex - 1] && (
                         <div
-                          key={item.id}
-                          className="flex-shrink-0 snap-center transition-all duration-300"
+                          className="transition-all duration-300 opacity-60"
                           style={{
-                            width: '256px',
-                            transform: isActive ? 'scale(1.05)' : 'scale(0.95)',
-                            opacity: isActive ? 1 : 0.6
+                            width: '180px',
+                            transform: 'scale(0.8)'
                           }}
                         >
                           <div
                             className="aspect-square rounded-3xl overflow-hidden transition-all duration-300"
                             style={{
-                              background: isActive ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.1)',
+                              background: 'rgba(255, 255, 255, 0.1)',
                               backdropFilter: 'blur(20px)',
-                              border: isActive ? '3px solid rgba(255, 255, 255, 0.5)' : '2px solid rgba(255, 255, 255, 0.2)',
-                              boxShadow: isActive 
-                                ? '0 20px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.2)' 
-                                : '0 10px 20px rgba(0, 0, 0, 0.15)'
+                              border: '2px solid rgba(255, 255, 255, 0.2)',
+                              boxShadow: '0 10px 20px rgba(0, 0, 0, 0.15)'
                             }}
-                            data-testid={`clothing-item-${item.id}`}
                           >
                             <img
-                              src={item.imageUrl}
-                              alt={item.name}
+                              src={filteredItemsForSlot(activeSlot)[currentSwipeIndex - 1].imageUrl}
+                              alt={filteredItemsForSlot(activeSlot)[currentSwipeIndex - 1].name}
                               className="w-full h-full object-cover"
-                              style={{
-                                filter: isActive ? 'brightness(1.1) contrast(1.1)' : 'brightness(0.9)'
-                              }}
+                              style={{ filter: 'brightness(0.8)' }}
                             />
                           </div>
-                          
-                          {/* Item Name */}
-                          <div className="text-center mt-4">
-                            <p className="text-white font-medium text-lg">
-                              {item.name}
-                            </p>
+                        </div>
+                      )}
+
+                      {/* Center Item (Active) */}
+                      <div
+                        className="transition-all duration-500"
+                        style={{
+                          width: '240px',
+                          transform: 'scale(1.1)'
+                        }}
+                      >
+                        <div
+                          className="aspect-square rounded-3xl overflow-hidden transition-all duration-500"
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.2)',
+                            backdropFilter: 'blur(20px)',
+                            border: '3px solid rgba(0, 255, 255, 0.8)',
+                            boxShadow: `
+                              0 0 20px rgba(0, 255, 255, 0.6),
+                              0 0 40px rgba(0, 255, 255, 0.4),
+                              0 0 60px rgba(0, 255, 255, 0.2),
+                              0 20px 40px rgba(0, 0, 0, 0.3)
+                            `,
+                            animation: 'neonPulse 2s ease-in-out infinite alternate'
+                          }}
+                          data-testid={`clothing-item-${filteredItemsForSlot(activeSlot)[currentSwipeIndex]?.id}`}
+                        >
+                          <img
+                            src={filteredItemsForSlot(activeSlot)[currentSwipeIndex]?.imageUrl}
+                            alt={filteredItemsForSlot(activeSlot)[currentSwipeIndex]?.name}
+                            className="w-full h-full object-cover"
+                            style={{ filter: 'brightness(1.1) contrast(1.1)' }}
+                          />
+                        </div>
+                        
+                        {/* Item Name */}
+                        <div className="text-center mt-4">
+                          <p className="text-black font-bold text-xl">
+                            {filteredItemsForSlot(activeSlot)[currentSwipeIndex]?.name}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Right Item */}
+                      {filteredItemsForSlot(activeSlot)[currentSwipeIndex + 1] && (
+                        <div
+                          className="transition-all duration-300 opacity-60"
+                          style={{
+                            width: '180px',
+                            transform: 'scale(0.8)'
+                          }}
+                        >
+                          <div
+                            className="aspect-square rounded-3xl overflow-hidden transition-all duration-300"
+                            style={{
+                              background: 'rgba(255, 255, 255, 0.1)',
+                              backdropFilter: 'blur(20px)',
+                              border: '2px solid rgba(255, 255, 255, 0.2)',
+                              boxShadow: '0 10px 20px rgba(0, 0, 0, 0.15)'
+                            }}
+                          >
+                            <img
+                              src={filteredItemsForSlot(activeSlot)[currentSwipeIndex + 1].imageUrl}
+                              alt={filteredItemsForSlot(activeSlot)[currentSwipeIndex + 1].name}
+                              className="w-full h-full object-cover"
+                              style={{ filter: 'brightness(0.8)' }}
+                            />
                           </div>
                         </div>
-                      );
-                    })}
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Navigation Buttons */}
+                  <div className="flex justify-center gap-6 mt-8">
+                    <button
+                      onClick={() => {
+                        if (currentSwipeIndex > 0) {
+                          const newIndex = currentSwipeIndex - 1;
+                          setCurrentSwipeIndex(newIndex);
+                          setSelectedItemInModal(filteredItemsForSlot(activeSlot)[newIndex]);
+                        }
+                      }}
+                      disabled={currentSwipeIndex <= 0}
+                      className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 disabled:opacity-30"
+                      style={{
+                        background: 'rgba(0, 0, 0, 0.8)',
+                        backdropFilter: 'blur(10px)',
+                        border: '2px solid rgba(255, 255, 255, 0.2)'
+                      }}
+                    >
+                      <ChevronLeft size={24} className="text-white" />
+                    </button>
+                    
+                    <button
+                      onClick={() => {
+                        if (currentSwipeIndex < filteredItemsForSlot(activeSlot).length - 1) {
+                          const newIndex = currentSwipeIndex + 1;
+                          setCurrentSwipeIndex(newIndex);
+                          setSelectedItemInModal(filteredItemsForSlot(activeSlot)[newIndex]);
+                        }
+                      }}
+                      disabled={currentSwipeIndex >= filteredItemsForSlot(activeSlot).length - 1}
+                      className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 disabled:opacity-30"
+                      style={{
+                        background: 'rgba(0, 0, 0, 0.8)',
+                        backdropFilter: 'blur(10px)',
+                        border: '2px solid rgba(255, 255, 255, 0.2)'
+                      }}
+                    >
+                      <ChevronRight size={24} className="text-white" />
+                    </button>
                   </div>
                 </div>
               ) : (
                 <div className="text-center">
-                  <p className="text-white/70 text-xl">
+                  <p className="text-black text-xl font-medium">
                     Нет доступных вещей для этой категории
                   </p>
                 </div>
@@ -375,13 +472,18 @@ export default function BuilderPage() {
                     setSelectedItemInModal(null);
                     setCurrentSwipeIndex(0);
                   }}
-                  className="px-12 py-4 rounded-2xl font-semibold text-xl transition-all duration-200 transform active:scale-95"
+                  className="px-12 py-4 rounded-2xl font-bold text-xl transition-all duration-200 transform active:scale-95"
                   style={{
-                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1))',
+                    background: 'rgba(0, 0, 0, 0.9)',
                     backdropFilter: 'blur(20px)',
-                    border: '2px solid rgba(255, 255, 255, 0.3)',
+                    border: '3px solid rgba(0, 255, 255, 0.8)',
                     color: 'white',
-                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
+                    boxShadow: `
+                      0 0 20px rgba(0, 255, 255, 0.6),
+                      0 0 40px rgba(0, 255, 255, 0.4),
+                      0 8px 32px rgba(0, 0, 0, 0.3)
+                    `,
+                    animation: 'neonPulse 2s ease-in-out infinite alternate'
                   }}
                   data-testid="button-select-item"
                 >
