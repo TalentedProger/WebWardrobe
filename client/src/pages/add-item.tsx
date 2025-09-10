@@ -52,22 +52,22 @@ export default function AddItemPage() {
 
         {/* Item Details */}
         {/* First Group: Name, Color, Price */}
-        <div className="space-y-4 bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
+        <div className="space-y-4 bg-gray-500/20 backdrop-blur-md rounded-xl p-4 border border-gray-400/30">
           {/* Name */}
           <div>
-            <label className="block text-base font-bold text-foreground mb-2">Название</label>
+            <label className="block text-lg font-black mb-2" style={{ color: '#112250' }}>Название</label>
             <input
               type="text"
               value={itemName}
               onChange={(e) => setItemName(e.target.value)}
-              className="w-full text-lg font-semibold bg-transparent border-none outline-none text-foreground"
+              className="w-full text-lg font-semibold bg-transparent border-none outline-none text-black"
               data-testid="input-name"
             />
           </div>
 
           {/* Color */}
           <div>
-            <label className="block text-base font-bold text-foreground mb-2">Цвет</label>
+            <label className="block text-lg font-black mb-2" style={{ color: '#112250' }}>Цвет</label>
             <div className="bg-muted/50 rounded-xl p-3">
               <div className="grid grid-cols-6 gap-2">
                 {/* Basic Colors */}
@@ -157,7 +157,7 @@ export default function AddItemPage() {
 
           {/* Price */}
           <div>
-            <label className="block text-base font-bold text-foreground mb-2">Цена</label>
+            <label className="block text-lg font-black mb-2" style={{ color: '#112250' }}>Цена</label>
             <div className="relative">
               <input
                 type="number"
@@ -166,7 +166,7 @@ export default function AddItemPage() {
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 placeholder="Введите цену в рублях"
-                className="w-full text-lg font-semibold bg-transparent border-none outline-none text-foreground pr-8"
+                className="w-full text-lg font-semibold bg-transparent border-none outline-none text-black pr-8"
                 data-testid="input-price"
               />
               <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-lg font-semibold text-muted-foreground">₽</span>
@@ -175,15 +175,15 @@ export default function AddItemPage() {
         </div>
 
         {/* Second Group: Category, Style, Season */}
-        <div className="mt-6 space-y-4 bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
+        <div className="mt-6 space-y-4 bg-gray-500/20 backdrop-blur-md rounded-xl p-4 border border-gray-400/30">
           {/* Category */}
           <div>
-            <label className="block text-base font-bold text-foreground mb-2">Категория</label>
+            <label className="block text-lg font-black mb-2" style={{ color: '#112250' }}>Категория</label>
             <div className="flex items-center gap-3">
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full text-lg font-semibold bg-transparent border-none outline-none text-foreground"
+                className="w-full text-lg font-semibold bg-transparent border-none outline-none text-black"
                 data-testid="select-category"
               >
                 <option value="Верх">Верх</option>
@@ -198,11 +198,11 @@ export default function AddItemPage() {
 
           {/* Style */}
           <div>
-            <label className="block text-base font-bold text-foreground mb-2">Стиль</label>
+            <label className="block text-lg font-black mb-2" style={{ color: '#112250' }}>Стиль</label>
             <select
               value={selectedStyle}
               onChange={(e) => setSelectedStyle(e.target.value)}
-              className="w-full text-lg font-semibold bg-transparent border-none outline-none text-foreground"
+              className="w-full text-lg font-semibold bg-transparent border-none outline-none text-black"
               data-testid="select-style"
             >
               <option value="Спорт">Спорт</option>
@@ -214,11 +214,11 @@ export default function AddItemPage() {
 
           {/* Season */}
           <div>
-            <label className="block text-base font-bold text-foreground mb-2">Сезон</label>
+            <label className="block text-lg font-black mb-2" style={{ color: '#112250' }}>Сезон</label>
             <select
               value={selectedSeason}
               onChange={(e) => setSelectedSeason(e.target.value)}
-              className="w-full text-lg font-semibold bg-transparent border-none outline-none text-foreground"
+              className="w-full text-lg font-semibold bg-transparent border-none outline-none text-black"
               data-testid="select-season"
             >
               <option value="Лето">Лето</option>
@@ -236,7 +236,7 @@ export default function AddItemPage() {
             value={productLink}
             onChange={(e) => setProductLink(e.target.value)}
             placeholder="Добавьте ссылку на товар"
-            className="w-full text-lg font-semibold bg-transparent border-none outline-none text-foreground placeholder:text-muted-foreground"
+            className="w-full text-lg font-semibold bg-transparent border-none outline-none text-black placeholder:text-muted-foreground"
             data-testid="input-product-link"
           />
         </div>
