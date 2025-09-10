@@ -1,18 +1,18 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Check, X, User, ArrowLeft, Plus, Settings, Sparkles } from "lucide-react";
+import { Check, X, User, ArrowLeft, Plus, Settings, Sparkles, Crown, Shirt2 as Shirt, PenTool as Pants, Footprints, Gem } from "lucide-react";
 import { queryClient } from "@/lib/queryClient";
 import { apiRequest } from "@/lib/queryClient";
 import ClothingItem from "@/components/clothing-item";
 import type { ClothingItem as ClothingItemType } from "@shared/schema";
 
 const mainClothingSlots = [
-  { key: "headwear", name: "Головные уборы", icon: "🧢" },
-  { key: "jacket", name: "Куртки/Пиджаки", icon: "🧥" },
-  { key: "top", name: "Верх", icon: "👕" },
-  { key: "bottom", name: "Низ", icon: "👖" },
-  { key: "shoes", name: "Обувь", icon: "👟" },
-  { key: "accessory", name: "Аксессуары", icon: "⌚" },
+  { key: "headwear", name: "Головные уборы", icon: Crown },
+  { key: "jacket", name: "Куртки/Пиджаки", icon: Shirt },
+  { key: "top", name: "Верх", icon: Shirt },
+  { key: "bottom", name: "Низ", icon: Pants },
+  { key: "shoes", name: "Обувь", icon: Footprints },
+  { key: "accessory", name: "Аксессуары", icon: Gem },
 ];
 
 const clothingSlots = mainClothingSlots; // Keep for compatibility
@@ -128,10 +128,10 @@ export default function BuilderPage() {
                 <button
                   key={slot.key}
                   onClick={() => setActiveSlot(slot.key)}
-                  className="w-20 h-20 rounded-2xl backdrop-blur-md bg-white/10 border-2 border-solid border-white/20 hover:border-primary/50 flex flex-col items-center justify-center transition-all duration-200 relative shadow-lg hover:shadow-xl"
+                  className="w-20 h-20 rounded-2xl backdrop-blur-md bg-white/20 border-2 border-solid border-white/30 hover:border-primary/50 flex flex-col items-center justify-center transition-all duration-200 relative shadow-lg hover:shadow-xl"
                   style={{
                     backdropFilter: 'blur(20px)',
-                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08)'
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1)'
                   }}
                   data-testid={`slot-${slot.key}`}
                 >
@@ -143,8 +143,8 @@ export default function BuilderPage() {
                     />
                   ) : (
                     <>
-                      <div className="text-2xl mb-1">{slot.icon}</div>
-                      <Plus size={16} className="text-muted-foreground" />
+                      <slot.icon size={24} className="mb-1 text-muted-foreground" />
+                      <Plus size={16} style={{color: '#112250'}} />
                     </>
                   )}
                 </button>
@@ -157,65 +157,57 @@ export default function BuilderPage() {
             <div className="flex justify-center mb-4">
               <button
                 onClick={() => setActiveSlot('accessory')}
-                className="flex items-center gap-2 px-4 py-2 backdrop-blur-md bg-white/10 border border-white/20 rounded-full hover:border-primary/50 transition-all duration-200 shadow-lg hover:shadow-xl"
+                className="flex items-center gap-2 px-4 py-2 backdrop-blur-md bg-white/20 border border-white/30 rounded-full hover:border-primary/50 transition-all duration-200 shadow-lg hover:shadow-xl"
                 style={{
                   backdropFilter: 'blur(20px)',
-                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08)'
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1)'
                 }}
                 data-testid="slot-accessory"
               >
-                <Plus size={16} className="text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">Добавить аксессуар</span>
+                <Plus size={16} style={{color: '#112250'}} />
+                <span className="text-sm text-muted-foreground">Добавить аксессуары</span>
               </button>
             </div>
             
-            {/* Accessories Display Row - 3 centered containers */}
-            <div className="px-4">
-              <div className="flex justify-center gap-4 overflow-x-auto pb-2" style={{scrollbarWidth: 'thin'}}>
-                {/* Filled accessory slots */}
-                {accessories.map((accessory, index) => (
-                  <div key={accessory.id} className="relative flex-shrink-0">
-                    <div 
-                      className="w-20 h-20 rounded-2xl backdrop-blur-md bg-white/10 border-2 border-solid border-white/20 flex items-center justify-center relative shadow-lg hover:shadow-xl transition-all duration-200"
-                      style={{
-                        backdropFilter: 'blur(20px)',
-                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08)'
-                      }}
-                      data-testid={`accessory-${accessory.id}`}
-                    >
-                      <img
-                        src={accessory.imageUrl}
-                        alt={accessory.name}
-                        className="w-full h-full object-cover rounded-xl"
-                      />
+            {/* Accessories Display Row - Show only when accessories exist */}
+            {accessories.length > 0 && (
+              <div>
+                <div className="flex justify-center gap-4 overflow-x-auto pb-2" style={{scrollbarWidth: 'thin'}}>
+                  {/* Filled accessory slots */}
+                  {accessories.map((accessory, index) => (
+                    <div key={accessory.id} className="relative flex-shrink-0">
+                      <div 
+                        className="w-20 h-20 rounded-2xl backdrop-blur-md bg-white/20 border-2 border-solid border-white/30 flex items-center justify-center relative shadow-lg hover:shadow-xl transition-all duration-200"
+                        style={{
+                          backdropFilter: 'blur(20px)',
+                          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1)'
+                        }}
+                        data-testid={`accessory-${accessory.id}`}
+                      >
+                        <img
+                          src={accessory.imageUrl}
+                          alt={accessory.name}
+                          className="w-full h-full object-cover rounded-xl"
+                        />
+                      </div>
                     </div>
-                    <button
-                      onClick={() => removeAccessory(index)}
-                      className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-colors text-xs font-bold shadow-lg"
-                      data-testid={`remove-accessory-${accessory.id}`}
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
-                
-                {/* Empty slots - ensure exactly 3 total containers */}
-                {accessories.length < 3 && Array.from({ length: 3 - accessories.length }).map((_, index) => (
+                  ))}
+                  
+                  {/* Always show one empty slot for adding more */}
                   <button
-                    key={`empty-${index}`}
                     onClick={() => setActiveSlot('accessory')}
-                    className="w-20 h-20 rounded-2xl backdrop-blur-md bg-white/5 border-2 border-dashed border-white/20 hover:border-primary/50 flex items-center justify-center transition-all duration-200 shadow-lg hover:shadow-xl flex-shrink-0"
+                    className="w-20 h-20 rounded-2xl backdrop-blur-md bg-white/10 border-2 border-dashed border-white/30 hover:border-[#112250]/50 flex items-center justify-center transition-all duration-200 shadow-lg hover:shadow-xl flex-shrink-0"
                     style={{
                       backdropFilter: 'blur(20px)',
                       boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04)'
                     }}
-                    data-testid={`empty-accessory-slot-${index}`}
+                    data-testid="add-more-accessory"
                   >
-                    <Plus size={16} className="text-muted-foreground" />
+                    <Plus size={16} style={{color: '#112250'}} />
                   </button>
-                ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Action Buttons */}
@@ -271,10 +263,10 @@ export default function BuilderPage() {
                     <button
                       key={item.id}
                       onClick={() => selectClothingItem(item)}
-                      className="aspect-square rounded-xl overflow-hidden backdrop-blur-md bg-white/10 border border-white/20 hover:border-primary transition-all duration-200 shadow-lg hover:shadow-xl"
+                      className="aspect-square rounded-xl overflow-hidden backdrop-blur-md bg-white/20 border border-white/30 hover:border-primary transition-all duration-200 shadow-lg hover:shadow-xl"
                       style={{
                         backdropFilter: 'blur(20px)',
-                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08)'
+                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1)'
                       }}
                       data-testid={`clothing-item-${item.id}`}
                     >

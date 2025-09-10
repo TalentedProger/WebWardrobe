@@ -9,6 +9,7 @@ import type { ClothingItem as ClothingItemType } from "@shared/schema";
 
 const categories = [
   { id: "all", label: "Всё" },
+  { id: "favorites", label: "Избранное ❤️" },
   { id: "top", label: "Верх" },
   { id: "bottom", label: "Низ" },
   { id: "shoes", label: "Обувь" },
@@ -50,6 +51,8 @@ export default function WardrobePage() {
 
   const filteredItems = selectedCategory === "all" 
     ? clothingItems 
+    : selectedCategory === "favorites"
+    ? clothingItems.filter(item => item.tags?.includes('favorite') || item.isFavorite)
     : clothingItems.filter(item => item.type === selectedCategory);
 
   return (
@@ -114,22 +117,6 @@ export default function WardrobePage() {
               {category.label}
             </button>
           ))}
-          
-          {/* Favorites Button */}
-          <button
-            onClick={() => setSelectedCategory('favorites')}
-            className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-colors duration-200 ${
-              selectedCategory === 'favorites'
-                ? "text-white font-medium" 
-                : "category-button-inactive font-bold hover:opacity-80"
-            }`}
-            style={{
-              backgroundColor: selectedCategory === 'favorites' ? '#112250' : '#E0C58F'
-            }}
-            data-testid="filter-favorites"
-          >
-            Избранное ❤️
-          </button>
         </div>
 
         {/* Clothing Grid */}
