@@ -35,8 +35,8 @@ export default function BuilderPage() {
     top: null,
     bottom: null,
     shoes: null,
-    accessory: null,
   });
+  const [accessories, setAccessories] = useState<ClothingItemType[]>([]);
   const [selectedBackground, setSelectedBackground] = useState(backgroundOptions[0]);
   const [itemScales, setItemScales] = useState<Record<string, number>>({});
   const [itemPositions, setItemPositions] = useState<Record<string, { x: number; y: number }>>({});
@@ -71,6 +71,11 @@ export default function BuilderPage() {
         outfitItems[key] = item.id;
       }
     });
+    
+    // Add accessories to outfit items
+    accessories.forEach((accessory) => {
+      outfitItems[`accessory_${accessory.id}`] = accessory.id;
+    });
 
     saveOutfitMutation.mutate({
       name: `Образ ${Date.now()}`,
@@ -82,12 +87,20 @@ export default function BuilderPage() {
 
   const selectClothingItem = (item: ClothingItemType) => {
     if (activeSlot) {
-      setCurrentOutfit(prev => ({
-        ...prev,
-        [activeSlot]: item,
-      }));
+      if (activeSlot === 'accessory') {
+        setAccessories(prev => [...prev, item]);
+      } else {
+        setCurrentOutfit(prev => ({
+          ...prev,
+          [activeSlot]: item,
+        }));
+      }
       setActiveSlot(null);
     }
+  };
+
+  const removeAccessory = (index: number) => {
+    setAccessories(prev => prev.filter((_, i) => i !== index));
   };
 
   const filteredItemsForSlot = (slotKey: string) =>
@@ -115,7 +128,11 @@ export default function BuilderPage() {
                 <button
                   key={slot.key}
                   onClick={() => setActiveSlot(slot.key)}
-                  className="w-20 h-20 rounded-2xl bg-muted/50 border-2 border-solid border-border hover:border-primary/50 flex flex-col items-center justify-center transition-all duration-200 relative"
+                  className="w-20 h-20 rounded-2xl backdrop-blur-md bg-white/10 border-2 border-solid border-white/20 hover:border-primary/50 flex flex-col items-center justify-center transition-all duration-200 relative shadow-lg hover:shadow-xl"
+                  style={{
+                    backdropFilter: 'blur(20px)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08)'
+                  }}
                   data-testid={`slot-${slot.key}`}
                 >
                   {selectedItem ? (
@@ -140,7 +157,11 @@ export default function BuilderPage() {
             <div className="flex justify-center mb-4">
               <button
                 onClick={() => setActiveSlot('accessory')}
-                className="flex items-center gap-2 px-4 py-2 bg-muted/50 rounded-full border border-border hover:border-primary/50 transition-all duration-200"
+                className="flex items-center gap-2 px-4 py-2 backdrop-blur-md bg-white/10 border border-white/20 rounded-full hover:border-primary/50 transition-all duration-200 shadow-lg hover:shadow-xl"
+                style={{
+                  backdropFilter: 'blur(20px)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08)'
+                }}
                 data-testid="slot-accessory"
               >
                 <Plus size={16} className="text-muted-foreground" />
@@ -148,25 +169,51 @@ export default function BuilderPage() {
               </button>
             </div>
             
-            {/* Accessories Display Row */}
-            <div className="flex justify-start gap-3 overflow-x-auto pb-2">
-              {currentOutfit.accessory && (
-                <div className="w-20 h-20 rounded-2xl bg-muted/50 border-2 border-solid border-border flex items-center justify-center relative">
-                  <img
-                    src={currentOutfit.accessory.imageUrl}
-                    alt={currentOutfit.accessory.name}
-                    className="w-full h-full object-cover rounded-xl"
-                  />
-                </div>
-              )}
-              
-              {/* Additional empty slots */}
-              <div className="w-20 h-20 rounded-2xl bg-muted/50 border-2 border-solid border-border flex items-center justify-center">
-                <Plus size={16} className="text-muted-foreground" />
-              </div>
-              
-              <div className="w-20 h-20 rounded-2xl bg-muted/50 border-2 border-solid border-border flex items-center justify-center">
-                <Plus size={16} className="text-muted-foreground" />
+            {/* Accessories Display Row - 3 centered containers */}
+            <div className="px-4">
+              <div className="flex justify-center gap-4 overflow-x-auto pb-2" style={{scrollbarWidth: 'thin'}}>
+                {/* Filled accessory slots */}
+                {accessories.map((accessory, index) => (
+                  <div key={accessory.id} className="relative flex-shrink-0">
+                    <div 
+                      className="w-20 h-20 rounded-2xl backdrop-blur-md bg-white/10 border-2 border-solid border-white/20 flex items-center justify-center relative shadow-lg hover:shadow-xl transition-all duration-200"
+                      style={{
+                        backdropFilter: 'blur(20px)',
+                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08)'
+                      }}
+                      data-testid={`accessory-${accessory.id}`}
+                    >
+                      <img
+                        src={accessory.imageUrl}
+                        alt={accessory.name}
+                        className="w-full h-full object-cover rounded-xl"
+                      />
+                    </div>
+                    <button
+                      onClick={() => removeAccessory(index)}
+                      className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-colors text-xs font-bold shadow-lg"
+                      data-testid={`remove-accessory-${accessory.id}`}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+                
+                {/* Empty slots - ensure exactly 3 total containers */}
+                {accessories.length < 3 && Array.from({ length: 3 - accessories.length }).map((_, index) => (
+                  <button
+                    key={`empty-${index}`}
+                    onClick={() => setActiveSlot('accessory')}
+                    className="w-20 h-20 rounded-2xl backdrop-blur-md bg-white/5 border-2 border-dashed border-white/20 hover:border-primary/50 flex items-center justify-center transition-all duration-200 shadow-lg hover:shadow-xl flex-shrink-0"
+                    style={{
+                      backdropFilter: 'blur(20px)',
+                      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04)'
+                    }}
+                    data-testid={`empty-accessory-slot-${index}`}
+                  >
+                    <Plus size={16} className="text-muted-foreground" />
+                  </button>
+                ))}
               </div>
             </div>
           </div>
@@ -174,14 +221,16 @@ export default function BuilderPage() {
           {/* Action Buttons */}
           <div className="grid grid-cols-2 gap-3">
             <button
-              onClick={() => setCurrentOutfit({
-                headwear: null,
-                jacket: null,
-                top: null,
-                bottom: null,
-                shoes: null,
-                accessory: null,
-              })}
+              onClick={() => {
+                setCurrentOutfit({
+                  headwear: null,
+                  jacket: null,
+                  top: null,
+                  bottom: null,
+                  shoes: null,
+                });
+                setAccessories([]);
+              }}
               className="py-3 px-4 text-white rounded-xl font-medium hover:opacity-90 transition-colors"
               style={{backgroundColor: '#E0C58F'}}
               data-testid="button-clear"
@@ -190,7 +239,7 @@ export default function BuilderPage() {
             </button>
             <button
               onClick={() => setCurrentStep("arrange")}
-              disabled={Object.values(currentOutfit).every(item => !item)}
+              disabled={Object.values(currentOutfit).every(item => !item) && accessories.length === 0}
               className="py-3 px-4 text-white rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
               style={{backgroundColor: '#112250'}}
               data-testid="button-next"
@@ -222,7 +271,11 @@ export default function BuilderPage() {
                     <button
                       key={item.id}
                       onClick={() => selectClothingItem(item)}
-                      className="aspect-square rounded-xl overflow-hidden border border-border hover:border-primary transition-colors"
+                      className="aspect-square rounded-xl overflow-hidden backdrop-blur-md bg-white/10 border border-white/20 hover:border-primary transition-all duration-200 shadow-lg hover:shadow-xl"
+                      style={{
+                        backdropFilter: 'blur(20px)',
+                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08)'
+                      }}
                       data-testid={`clothing-item-${item.id}`}
                     >
                       <img
@@ -250,6 +303,8 @@ export default function BuilderPage() {
 
   if (currentStep === "arrange") {
     const selectedItems = Object.entries(currentOutfit).filter(([_, item]) => item !== null);
+    const accessoryItems = accessories.map((accessory) => [`accessory_${accessory.id}`, accessory] as [string, ClothingItemType]);
+    const allItems = [...selectedItems, ...accessoryItems];
     
     return (
       <div className="flex-1 bg-background pb-20">
@@ -280,7 +335,7 @@ export default function BuilderPage() {
               <div className="absolute inset-0 bg-black/20"></div>
               
               {/* Selected Items */}
-              {selectedItems.map(([slotKey, item], index) => {
+              {allItems.map(([slotKey, item], index) => {
                 const scale = itemScales[slotKey] || 1;
                 const position = itemPositions[slotKey] || { x: 50 + index * 20, y: 100 + index * 50 };
                 
@@ -461,7 +516,7 @@ export default function BuilderPage() {
                 }}
               >
                 <div className="absolute inset-0 bg-black/20"></div>
-                {Object.entries(currentOutfit).map(([slotKey, item], index) => {
+                {[...Object.entries(currentOutfit), ...accessories.map((accessory) => [`accessory_${accessory.id}`, accessory] as [string, ClothingItemType])].map(([slotKey, item], index) => {
                   if (!item) return null;
                   const scale = itemScales[slotKey] || 1;
                   const position = itemPositions[slotKey] || { x: 50 + index * 20, y: 100 + index * 50 };
@@ -502,8 +557,8 @@ export default function BuilderPage() {
                   top: null,
                   bottom: null,
                   shoes: null,
-                  accessory: null,
                 });
+                setAccessories([]);
               }}
               className="w-full py-3 px-4 text-white rounded-xl font-medium hover:opacity-90 transition-colors"
               style={{backgroundColor: '#E0C58F'}}
