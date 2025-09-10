@@ -165,14 +165,14 @@ export default function OutfitsPage() {
           {/* Outfit Parameters */}
           <div className="text-left mb-6">
             <div className="space-y-2">
-              <div className="text-sm text-foreground">
-                <span className="font-bold">Категория:</span> {selectedOutfit.category || 'Не указано'}
+              <div className="text-base text-foreground">
+                <span className="font-black text-lg">Категория:</span> {selectedOutfit.category || 'Не указано'}
               </div>
-              <div className="text-sm text-foreground">
-                <span className="font-bold">Стиль:</span> {selectedOutfit.style || 'Не указан'}
+              <div className="text-base text-foreground">
+                <span className="font-black text-lg">Стиль:</span> {selectedOutfit.style || 'Не указан'}
               </div>
-              <div className="text-sm text-foreground">
-                <span className="font-bold">Сезон:</span> {getSeason(selectedOutfit.season)}
+              <div className="text-base text-foreground">
+                <span className="font-black text-lg">Сезон:</span> {getSeason(selectedOutfit.season)}
               </div>
             </div>
           </div>
@@ -180,10 +180,11 @@ export default function OutfitsPage() {
           {/* Outfit Cover */}
           <div className="w-full max-w-sm mx-auto mb-6">
             <div 
-              className="w-full bg-cover bg-center rounded-2xl relative overflow-hidden border-2 border-border"
+              className="w-full bg-cover bg-center rounded-2xl relative overflow-hidden border-2 border-border shadow-2xl"
               style={{ 
                 aspectRatio: '3/4',
                 backgroundImage: `url(${getOutfitCover(selectedOutfit)})`,
+                boxShadow: '0 20px 40px rgba(0, 0, 0, 0.15), 0 10px 20px rgba(0, 0, 0, 0.1)'
               }}
             >
               <div className="absolute inset-0 bg-black/20"></div>
@@ -217,7 +218,7 @@ export default function OutfitsPage() {
 
           {/* Items Carousel */}
           <div className="mb-6">
-            <h3 className="text-lg font-bold text-foreground mb-4">Элементы образа</h3>
+            <h3 className="text-lg font-bold text-foreground mb-4 text-center">Элементы образа</h3>
             <div className="flex gap-4 overflow-x-auto pb-2">
               {outfitItems.map(({ slot, item }) => (
                 <div key={slot} className="flex-shrink-0">
