@@ -352,57 +352,57 @@ export default function OutfitsPage() {
         </div>
 
         {/* Outfits Grid - 2 columns */}
-        {isLoading ? (
-          <div className="grid grid-cols-2 gap-4">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="aspect-[3/4] bg-muted rounded-2xl animate-pulse"></div>
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-4">
-            {filteredOutfits.map((outfit) => (
-              <button
-                key={outfit.id}
-                onClick={() => {
-                  setSelectedOutfit(outfit);
-                  // Initialize edited outfit with current items
-                  const outfitItems: Record<string, ClothingItem | null> = {};
-                  Object.entries(outfit.items).forEach(([slot, itemId]) => {
-                    const item = clothingItems.find(ci => ci.id === itemId) || null;
-                    outfitItems[slot] = item;
-                  });
-                  setEditedOutfit(outfitItems);
-                  setHasChanges(false);
-                }}
-                className="aspect-[3/4] rounded-2xl overflow-hidden bg-muted border-0 hover:scale-105 transition-transform duration-200 w-full"
-                data-testid={`outfit-tile-${outfit.id}`}
-              >
-                <img
-                  src={getOutfitCover(outfit)}
-                  alt={outfit.name}
-                  className="w-full h-full object-cover"
-                />
-              </button>
-            ))}
-          </div>
-        )}
-
-        {filteredOutfits.length === 0 && !isLoading && (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 glass-button">
-              <Plus size={24} className="text-muted-foreground" />
+        <div className={filteredOutfits.length === 0 && !isLoading ? "flex items-center justify-center min-h-[60vh]" : ""}>
+          {isLoading ? (
+            <div className="grid grid-cols-2 gap-4">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="aspect-[3/4] bg-muted rounded-2xl animate-pulse"></div>
+              ))}
             </div>
-            <p className="text-muted-foreground mb-4">
-              {selectedCategory === "all" 
-                ? "У вас пока нет сохранённых образов" 
-                : `Нет образов в категории "${categories.find(c => c.id === selectedCategory)?.label}"`
-              }
-            </p>
-            <button className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors" data-testid="button-create-first-outfit">
-              Создать первый образ
-            </button>
-          </div>
-        )}
+          ) : filteredOutfits.length > 0 ? (
+            <div className="grid grid-cols-2 gap-4">
+              {filteredOutfits.map((outfit) => (
+                <button
+                  key={outfit.id}
+                  onClick={() => {
+                    setSelectedOutfit(outfit);
+                    // Initialize edited outfit with current items
+                    const outfitItems: Record<string, ClothingItem | null> = {};
+                    Object.entries(outfit.items).forEach(([slot, itemId]) => {
+                      const item = clothingItems.find(ci => ci.id === itemId) || null;
+                      outfitItems[slot] = item;
+                    });
+                    setEditedOutfit(outfitItems);
+                    setHasChanges(false);
+                  }}
+                  className="aspect-[3/4] rounded-2xl overflow-hidden bg-muted border-0 hover:scale-105 transition-transform duration-200 w-full"
+                  data-testid={`outfit-tile-${outfit.id}`}
+                >
+                  <img
+                    src={getOutfitCover(outfit)}
+                    alt={outfit.name}
+                    className="w-full h-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center">
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 glass-button">
+                <Plus size={24} className="text-muted-foreground" />
+              </div>
+              <p className="text-muted-foreground mb-4">
+                {selectedCategory === "all" 
+                  ? "У вас пока нет сохранённых образов" 
+                  : `Нет образов в категории "${categories.find(c => c.id === selectedCategory)?.label}"`
+                }
+              </p>
+              <button className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors" data-testid="button-create-first-outfit">
+                Создать первый образ
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* AI Generation Modal */}

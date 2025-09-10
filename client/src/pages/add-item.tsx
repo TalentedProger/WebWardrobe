@@ -5,7 +5,7 @@ import imageUrl from "@assets/ChatGPT Image 5 сент. 2025 г., 23_21_09_17571
 export default function AddItemPage() {
   const [itemName, setItemName] = useState("Футболка белая");
   const [price, setPrice] = useState("");
-  const [selectedColor, setSelectedColor] = useState(null);
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [colorsExpanded, setColorsExpanded] = useState(false);
   const [productLink, setProductLink] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Верх");

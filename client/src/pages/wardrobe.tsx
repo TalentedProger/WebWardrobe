@@ -133,46 +133,46 @@ export default function WardrobePage() {
         </div>
 
         {/* Clothing Grid */}
-        {isLoading ? (
-          <div className="grid grid-cols-2 gap-4">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="bg-card rounded-2xl border border-border overflow-hidden animate-pulse">
-                <div className="aspect-square bg-muted"></div>
-                <div className="p-3">
-                  <div className="h-4 bg-muted rounded mb-2"></div>
-                  <div className="h-3 bg-muted rounded w-2/3"></div>
+        <div className={filteredItems.length === 0 && !isLoading ? "flex items-center justify-center min-h-[60vh]" : ""}>
+          {isLoading ? (
+            <div className="grid grid-cols-2 gap-4">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="bg-card rounded-2xl border border-border overflow-hidden animate-pulse">
+                  <div className="aspect-square bg-muted"></div>
+                  <div className="p-3">
+                    <div className="h-4 bg-muted rounded mb-2"></div>
+                    <div className="h-3 bg-muted rounded w-2/3"></div>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-4">
-            {filteredItems.map((item) => (
-              <ClothingItem key={item.id} item={item} />
-            ))}
-          </div>
-        )}
-
-        {filteredItems.length === 0 && !isLoading && (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-              <Upload size={24} className="text-muted-foreground" />
+              ))}
             </div>
-            <p className="text-muted-foreground mb-4">
-              {selectedCategory === "all" 
-                ? "У вас пока нет одежды в гардеробе" 
-                : `Нет одежды в категории "${categories.find(c => c.id === selectedCategory)?.label}"`
-              }
-            </p>
-            <button 
-              onClick={handleAddItem}
-              className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-              data-testid="button-add-first-item"
-            >
-              Добавить первую вещь
-            </button>
-          </div>
-        )}
+          ) : filteredItems.length > 0 ? (
+            <div className="grid grid-cols-2 gap-4">
+              {filteredItems.map((item) => (
+                <ClothingItem key={item.id} item={item} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center">
+              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                <Upload size={24} className="text-muted-foreground" />
+              </div>
+              <p className="text-muted-foreground mb-4">
+                {selectedCategory === "all" 
+                  ? "У вас пока нет одежды в гардеробе" 
+                  : `Нет одежды в категории "${categories.find(c => c.id === selectedCategory)?.label}"`
+                }
+              </p>
+              <button 
+                onClick={handleAddItem}
+                className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                data-testid="button-add-first-item"
+              >
+                Добавить первую вещь
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
