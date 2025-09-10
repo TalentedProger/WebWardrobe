@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Check, X, User, ArrowLeft, Plus, Settings, Sparkles, Crown, Shirt2 as Shirt, PenTool as Pants, Footprints, Gem } from "lucide-react";
+import { Check, X, User, ArrowLeft, Plus, Settings, Sparkles, Crown, Shirt, Zap as Pants, Footprints, Gem } from "lucide-react";
 import { queryClient } from "@/lib/queryClient";
 import { apiRequest } from "@/lib/queryClient";
 import ClothingItem from "@/components/clothing-item";
