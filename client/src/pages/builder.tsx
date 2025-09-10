@@ -45,6 +45,8 @@ export default function BuilderPage() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSeason, setSelectedSeason] = useState("");
   const [selectedStyle, setSelectedStyle] = useState("");
+  const [selectedItemInModal, setSelectedItemInModal] = useState<ClothingItemType | null>(null);
+  const [currentSwipeIndex, setCurrentSwipeIndex] = useState(0);
 
 
   const { data: clothingItems = [] } = useQuery<ClothingItemType[]>({
@@ -96,6 +98,18 @@ export default function BuilderPage() {
         }));
       }
       setActiveSlot(null);
+      setSelectedItemInModal(null);
+      setCurrentSwipeIndex(0);
+    }
+  };
+
+  // Initialize first item when modal opens
+  const initializeModal = (slotKey: string) => {
+    setActiveSlot(slotKey);
+    const items = filteredItemsForSlot(slotKey);
+    if (items.length > 0) {
+      setSelectedItemInModal(items[0]);
+      setCurrentSwipeIndex(0);
     }
   };
 
@@ -127,7 +141,7 @@ export default function BuilderPage() {
               return (
                 <button
                   key={slot.key}
-                  onClick={() => setActiveSlot(slot.key)}
+                  onClick={() => initializeModal(slot.key)}
                   className="w-20 h-20 rounded-2xl backdrop-blur-md bg-white/20 border-2 border-solid border-white/30 hover:border-primary/50 flex flex-col items-center justify-center transition-all duration-200 relative shadow-lg hover:shadow-xl"
                   style={{
                     backdropFilter: 'blur(20px)',
@@ -156,7 +170,7 @@ export default function BuilderPage() {
           <div className="mb-8">
             <div className="flex justify-center mb-4">
               <button
-                onClick={() => setActiveSlot('accessory')}
+                onClick={() => initializeModal('accessory')}
                 className="flex items-center gap-2 px-4 py-2 backdrop-blur-md bg-white/20 border border-white/30 rounded-full hover:border-primary/50 transition-all duration-200 shadow-lg hover:shadow-xl"
                 style={{
                   backdropFilter: 'blur(20px)',
@@ -195,7 +209,7 @@ export default function BuilderPage() {
                   
                   {/* Always show one empty slot for adding more */}
                   <button
-                    onClick={() => setActiveSlot('accessory')}
+                    onClick={() => initializeModal('accessory')}
                     className="w-20 h-20 rounded-2xl backdrop-blur-md bg-white/10 border-2 border-dashed border-white/30 hover:border-[#112250]/50 flex items-center justify-center transition-all duration-200 shadow-lg hover:shadow-xl flex-shrink-0"
                     style={{
                       backdropFilter: 'blur(20px)',
@@ -241,52 +255,141 @@ export default function BuilderPage() {
           </div>
         </div>
 
-        {/* Clothing Selection Modal */}
+        {/* Clothing Selection Modal - Full Screen Glass Design */}
         {activeSlot && (
-          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
-            <div className="bg-card rounded-2xl m-4 max-w-sm w-full max-h-[80vh] flex flex-col">
-              <div className="flex items-center justify-between p-4 border-b border-border">
-                <h3 className="font-semibold text-foreground">
-                  {clothingSlots.find(s => s.key === activeSlot)?.name}
-                </h3>
+          <div 
+            className="fixed inset-0 z-50 flex flex-col"
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)'
+            }}
+          >
+            {/* Close Button - Top Right */}
+            <div className="absolute top-6 right-6 z-10">
+              <button
+                onClick={() => {
+                  setActiveSlot(null);
+                  setSelectedItemInModal(null);
+                  setCurrentSwipeIndex(0);
+                }}
+                className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)'
+                }}
+                data-testid="button-close-modal"
+              >
+                <X size={24} className="text-white" />
+              </button>
+            </div>
+
+            {/* Category Title - Top Center */}
+            <div className="flex justify-center pt-20 pb-8">
+              <h2 className="text-3xl font-bold text-white text-center">
+                {clothingSlots.find(s => s.key === activeSlot)?.name}
+              </h2>
+            </div>
+
+            {/* Horizontal Swiper */}
+            <div className="flex-1 flex items-center justify-center px-6">
+              {filteredItemsForSlot(activeSlot).length > 0 ? (
+                <div className="w-full">
+                  <div 
+                    className="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory"
+                    style={{
+                      scrollbarWidth: 'none',
+                      msOverflowStyle: 'none',
+                      WebkitScrollbarDisplay: 'none'
+                    }}
+                    onScroll={(e) => {
+                      const scrollLeft = e.currentTarget.scrollLeft;
+                      const itemWidth = 280; // 256px + 24px gap
+                      const newIndex = Math.round(scrollLeft / itemWidth);
+                      setCurrentSwipeIndex(newIndex);
+                      setSelectedItemInModal(filteredItemsForSlot(activeSlot)[newIndex] || null);
+                    }}
+                  >
+                    {filteredItemsForSlot(activeSlot).map((item, index) => {
+                      const isActive = index === currentSwipeIndex;
+                      return (
+                        <div
+                          key={item.id}
+                          className="flex-shrink-0 snap-center transition-all duration-300"
+                          style={{
+                            width: '256px',
+                            transform: isActive ? 'scale(1.05)' : 'scale(0.95)',
+                            opacity: isActive ? 1 : 0.6
+                          }}
+                        >
+                          <div
+                            className="aspect-square rounded-3xl overflow-hidden transition-all duration-300"
+                            style={{
+                              background: isActive ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.1)',
+                              backdropFilter: 'blur(20px)',
+                              border: isActive ? '3px solid rgba(255, 255, 255, 0.5)' : '2px solid rgba(255, 255, 255, 0.2)',
+                              boxShadow: isActive 
+                                ? '0 20px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.2)' 
+                                : '0 10px 20px rgba(0, 0, 0, 0.15)'
+                            }}
+                            data-testid={`clothing-item-${item.id}`}
+                          >
+                            <img
+                              src={item.imageUrl}
+                              alt={item.name}
+                              className="w-full h-full object-cover"
+                              style={{
+                                filter: isActive ? 'brightness(1.1) contrast(1.1)' : 'brightness(0.9)'
+                              }}
+                            />
+                          </div>
+                          
+                          {/* Item Name */}
+                          <div className="text-center mt-4">
+                            <p className="text-white font-medium text-lg">
+                              {item.name}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center">
+                  <p className="text-white/70 text-xl">
+                    Нет доступных вещей для этой категории
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Select Button - Bottom Center */}
+            {selectedItemInModal && (
+              <div className="flex justify-center pb-12 px-6">
                 <button
-                  onClick={() => setActiveSlot(null)}
-                  className="p-2 hover:bg-muted rounded-full transition-colors"
-                  data-testid="button-close-modal"
+                  onClick={() => {
+                    selectClothingItem(selectedItemInModal);
+                    setActiveSlot(null);
+                    setSelectedItemInModal(null);
+                    setCurrentSwipeIndex(0);
+                  }}
+                  className="px-12 py-4 rounded-2xl font-semibold text-xl transition-all duration-200 transform active:scale-95"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1))',
+                    backdropFilter: 'blur(20px)',
+                    border: '2px solid rgba(255, 255, 255, 0.3)',
+                    color: 'white',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
+                  }}
+                  data-testid="button-select-item"
                 >
-                  <X size={20} />
+                  Выбрать
                 </button>
               </div>
-              <div className="p-4 flex-1 overflow-y-auto">
-                <div className="grid grid-cols-2 gap-3">
-                  {filteredItemsForSlot(activeSlot).map((item) => (
-                    <button
-                      key={item.id}
-                      onClick={() => selectClothingItem(item)}
-                      className="aspect-square rounded-xl overflow-hidden backdrop-blur-md bg-white/20 border border-white/30 hover:border-primary transition-all duration-200 shadow-lg hover:shadow-xl"
-                      style={{
-                        backdropFilter: 'blur(20px)',
-                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1)'
-                      }}
-                      data-testid={`clothing-item-${item.id}`}
-                    >
-                      <img
-                        src={item.imageUrl}
-                        alt={item.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </button>
-                  ))}
-                </div>
-                {filteredItemsForSlot(activeSlot).length === 0 && (
-                  <div className="text-center py-8">
-                    <p className="text-muted-foreground">
-                      Нет доступных вещей для этой категории
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
+            )}
+
           </div>
         )}
       </div>
