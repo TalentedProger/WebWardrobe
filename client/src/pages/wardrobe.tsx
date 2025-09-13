@@ -52,7 +52,7 @@ export default function WardrobePage() {
   const filteredItems = selectedCategory === "all" 
     ? clothingItems 
     : selectedCategory === "favorites"
-    ? clothingItems.filter(item => item.tags?.includes('favorite') || item.isFavorite)
+    ? clothingItems.filter(item => item.tags?.includes('favorite'))
     : clothingItems.filter(item => item.type === selectedCategory);
 
   return (

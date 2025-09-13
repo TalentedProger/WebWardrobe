@@ -16,12 +16,18 @@ export default function AddItemPage() {
 
   return (
     <div className="flex-1 bg-background pb-20">
-      <div className="p-6">
+      <div className="px-6 py-8 max-w-lg mx-auto">
         {/* Image Section */}
-        <div className="w-full max-w-sm mx-auto mb-6">
+        <div className="w-full max-w-sm mx-auto mb-8">
           <div 
-            className="w-full rounded-2xl relative overflow-hidden border-2 border-border bg-muted"
-            style={{ aspectRatio: '1/1' }}
+            className="w-full rounded-3xl relative overflow-hidden transition-all duration-300 hover:scale-[1.02]"
+            style={{ 
+              aspectRatio: '1/1',
+              background: 'rgba(255, 255, 255, 0.15)',
+              backdropFilter: 'blur(20px)',
+              border: '2px solid rgba(255, 255, 255, 0.25)',
+              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.15), 0 8px 16px rgba(0, 0, 0, 0.1)'
+            }}
           >
             <img
               src={imageUrl}
@@ -30,45 +36,87 @@ export default function AddItemPage() {
             />
             {/* Edit Icon */}
             <button 
-              className="absolute top-2 right-2 w-7 h-7 bg-black/40 hover:bg-black/50 text-white rounded-full flex items-center justify-center transition-colors"
+              className="absolute top-4 right-4 w-10 h-10 text-white rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
+              style={{
+                background: 'rgba(0, 0, 0, 0.6)',
+                backdropFilter: 'blur(10px)',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.25)'
+              }}
               data-testid="button-edit-photo"
             >
-              <Pencil size={14} />
+              <Pencil size={16} />
             </button>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-2 gap-3 mb-6">
-          <button className="flex items-center justify-center gap-2 py-3 px-4 bg-blue-600 rounded-xl text-white hover:bg-blue-700 transition-colors" data-testid="button-retake">
-            <Camera size={20} />
+        <div className="grid grid-cols-2 gap-4 mb-8">
+          <button 
+            className="flex items-center justify-center gap-2 py-4 px-4 rounded-2xl text-white font-medium transition-all duration-200 hover:scale-[1.02] hover:shadow-xl active:scale-[0.98]"
+            style={{
+              background: '#E0C58F',
+              boxShadow: '0 8px 20px rgba(224, 197, 143, 0.4)'
+            }}
+            data-testid="button-retake"
+          >
+            <Camera size={18} />
             Переснять
           </button>
-          <button className="flex items-center justify-center gap-2 py-3 px-4 bg-red-600 rounded-xl text-white hover:bg-red-700 transition-colors" data-testid="button-delete">
-            <Trash2 size={20} />
+          <button 
+            className="flex items-center justify-center gap-2 py-4 px-4 rounded-2xl text-white font-medium transition-all duration-200 hover:scale-[1.02] hover:shadow-xl active:scale-[0.98]"
+            style={{
+              background: 'rgba(220, 38, 38, 0.9)',
+              boxShadow: '0 8px 20px rgba(220, 38, 38, 0.3)'
+            }}
+            data-testid="button-delete"
+          >
+            <Trash2 size={18} />
             Удалить
           </button>
         </div>
 
         {/* Item Details */}
         {/* First Group: Name, Color, Price */}
-        <div className="space-y-4 bg-gray-500/20 backdrop-blur-md rounded-xl p-4 border border-gray-400/30">
+        <div 
+          className="space-y-6 rounded-3xl p-6 mb-6 transition-all duration-300 hover:shadow-2xl"
+          style={{
+            background: 'rgba(255, 255, 255, 0.12)',
+            backdropFilter: 'blur(20px)',
+            border: '1.5px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 16px 32px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.1)'
+          }}
+        >
           {/* Name */}
           <div>
-            <label className="block text-lg font-black mb-2" style={{ color: '#112250' }}>Название</label>
-            <input
-              type="text"
-              value={itemName}
-              onChange={(e) => setItemName(e.target.value)}
-              className="w-full text-lg font-semibold bg-transparent border-none outline-none text-black"
-              data-testid="input-name"
-            />
+            <label className="block text-xl font-black mb-3 tracking-tight" style={{ color: '#112250' }}>Название</label>
+            <div 
+              className="w-full rounded-xl p-4 transition-all duration-200 focus-within:scale-[1.01] focus-within:shadow-lg"
+              style={{
+                background: 'rgba(255, 255, 255, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.15)'
+              }}
+            >
+              <input
+                type="text"
+                value={itemName}
+                onChange={(e) => setItemName(e.target.value)}
+                className="w-full text-lg font-semibold bg-transparent border-none outline-none text-black placeholder:text-gray-500"
+                placeholder="Введите название элемента"
+                data-testid="input-name"
+              />
+            </div>
           </div>
 
           {/* Color */}
           <div>
-            <label className="block text-lg font-black mb-2" style={{ color: '#112250' }}>Цвет</label>
-            <div className="bg-muted/50 rounded-xl p-3">
+            <label className="block text-xl font-black mb-3 tracking-tight" style={{ color: '#112250' }}>Цвет</label>
+            <div 
+              className="rounded-xl p-4 transition-all duration-200"
+              style={{
+                background: 'rgba(255, 255, 255, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.15)'
+              }}
+            >
               <div className="grid grid-cols-6 gap-2">
                 {/* Basic Colors */}
                 <button
@@ -157,8 +205,14 @@ export default function AddItemPage() {
 
           {/* Price */}
           <div>
-            <label className="block text-lg font-black mb-2" style={{ color: '#112250' }}>Цена</label>
-            <div className="relative">
+            <label className="block text-xl font-black mb-3 tracking-tight" style={{ color: '#112250' }}>Цена</label>
+            <div 
+              className="relative rounded-xl p-4 transition-all duration-200 focus-within:scale-[1.01] focus-within:shadow-lg"
+              style={{
+                background: 'rgba(255, 255, 255, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.15)'
+              }}
+            >
               <input
                 type="number"
                 step="0.01"
@@ -166,24 +220,38 @@ export default function AddItemPage() {
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 placeholder="Введите цену в рублях"
-                className="w-full text-lg font-semibold bg-transparent border-none outline-none text-black pr-8"
+                className="w-full text-lg font-semibold bg-transparent border-none outline-none text-black pr-12 placeholder:text-gray-500"
                 data-testid="input-price"
               />
-              <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-lg font-semibold text-muted-foreground">₽</span>
+              <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-lg font-bold" style={{ color: '#112250' }}>₽</span>
             </div>
           </div>
         </div>
 
         {/* Second Group: Category, Style, Season */}
-        <div className="mt-6 space-y-4 bg-gray-500/20 backdrop-blur-md rounded-xl p-4 border border-gray-400/30">
+        <div 
+          className="space-y-6 rounded-3xl p-6 mb-8 transition-all duration-300 hover:shadow-2xl"
+          style={{
+            background: 'rgba(255, 255, 255, 0.12)',
+            backdropFilter: 'blur(20px)',
+            border: '1.5px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 16px 32px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.1)'
+          }}
+        >
           {/* Category */}
           <div>
-            <label className="block text-lg font-black mb-2" style={{ color: '#112250' }}>Категория</label>
-            <div className="flex items-center gap-3">
+            <label className="block text-xl font-black mb-3 tracking-tight" style={{ color: '#112250' }}>Категория</label>
+            <div 
+              className="rounded-xl p-4 transition-all duration-200 focus-within:scale-[1.01] focus-within:shadow-lg"
+              style={{
+                background: 'rgba(255, 255, 255, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.15)'
+              }}
+            >
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full text-lg font-semibold bg-transparent border-none outline-none text-black"
+                className="w-full text-lg font-semibold bg-transparent border-none outline-none text-black cursor-pointer"
                 data-testid="select-category"
               >
                 <option value="Верх">Верх</option>
@@ -198,61 +266,100 @@ export default function AddItemPage() {
 
           {/* Style */}
           <div>
-            <label className="block text-lg font-black mb-2" style={{ color: '#112250' }}>Стиль</label>
-            <select
-              value={selectedStyle}
-              onChange={(e) => setSelectedStyle(e.target.value)}
-              className="w-full text-lg font-semibold bg-transparent border-none outline-none text-black"
-              data-testid="select-style"
+            <label className="block text-xl font-black mb-3 tracking-tight" style={{ color: '#112250' }}>Стиль</label>
+            <div 
+              className="rounded-xl p-4 transition-all duration-200 focus-within:scale-[1.01] focus-within:shadow-lg"
+              style={{
+                background: 'rgba(255, 255, 255, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.15)'
+              }}
             >
+              <select
+                value={selectedStyle}
+                onChange={(e) => setSelectedStyle(e.target.value)}
+                className="w-full text-lg font-semibold bg-transparent border-none outline-none text-black cursor-pointer"
+                data-testid="select-style"
+              >
               <option value="Спорт">Спорт</option>
               <option value="Классический">Классический</option>
               <option value="Кажуал">Кажуал</option>
               <option value="Элегантный">Элегантный</option>
-            </select>
+              </select>
+            </div>
           </div>
 
           {/* Season */}
           <div>
-            <label className="block text-lg font-black mb-2" style={{ color: '#112250' }}>Сезон</label>
-            <select
-              value={selectedSeason}
-              onChange={(e) => setSelectedSeason(e.target.value)}
-              className="w-full text-lg font-semibold bg-transparent border-none outline-none text-black"
-              data-testid="select-season"
+            <label className="block text-xl font-black mb-3 tracking-tight" style={{ color: '#112250' }}>Сезон</label>
+            <div 
+              className="rounded-xl p-4 transition-all duration-200 focus-within:scale-[1.01] focus-within:shadow-lg"
+              style={{
+                background: 'rgba(255, 255, 255, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.15)'
+              }}
             >
+              <select
+                value={selectedSeason}
+                onChange={(e) => setSelectedSeason(e.target.value)}
+                className="w-full text-lg font-semibold bg-transparent border-none outline-none text-black cursor-pointer"
+                data-testid="select-season"
+              >
               <option value="Лето">Лето</option>
               <option value="Зима">Зима</option>
               <option value="Весна">Весна</option>
               <option value="Осень">Осень</option>
-            </select>
+              </select>
+            </div>
           </div>
         </div>
 
         {/* Product Link */}
-        <div className="mt-12">
-          <input
-            type="url"
-            value={productLink}
-            onChange={(e) => setProductLink(e.target.value)}
-            placeholder="Добавьте ссылку на товар"
-            className="w-full text-lg font-semibold bg-transparent border-none outline-none text-black placeholder:text-muted-foreground"
-            data-testid="input-product-link"
-          />
+        <div 
+          className="rounded-3xl p-6 mb-8 transition-all duration-300 hover:shadow-2xl"
+          style={{
+            background: 'rgba(255, 255, 255, 0.1)',
+            backdropFilter: 'blur(20px)',
+            border: '1.5px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)'
+          }}
+        >
+          <label className="block text-xl font-black mb-3 tracking-tight" style={{ color: '#112250' }}>Ссылка на товар</label>
+          <div 
+            className="rounded-xl p-4 transition-all duration-200 focus-within:scale-[1.01] focus-within:shadow-lg"
+            style={{
+              background: 'rgba(255, 255, 255, 0.08)',
+              border: '1px solid rgba(255, 255, 255, 0.15)'
+            }}
+          >
+            <input
+              type="url"
+              value={productLink}
+              onChange={(e) => setProductLink(e.target.value)}
+              placeholder="https://example.com/product"
+              className="w-full text-lg font-semibold bg-transparent border-none outline-none text-black placeholder:text-gray-500"
+              data-testid="input-product-link"
+            />
+          </div>
         </div>
 
         {/* Save Button */}
-        <div className="mt-8">
+        <div className="mt-4">
           <button
-            className="w-full py-3 px-4 rounded-xl font-medium transition-colors"
+            className={`w-full py-4 px-6 rounded-2xl font-bold text-lg transition-all duration-200 ${
+              hasAnyValue 
+                ? 'hover:scale-[1.02] hover:shadow-xl active:scale-[0.98] text-white' 
+                : 'cursor-not-allowed text-gray-500'
+            }`}
             style={{
-              backgroundColor: hasAnyValue ? '#112250' : '#e5e7eb',
-              color: hasAnyValue ? 'white' : '#6b7280'
+              backgroundColor: hasAnyValue ? '#112250' : 'rgba(229, 231, 235, 0.8)',
+              boxShadow: hasAnyValue 
+                ? '0 12px 28px rgba(17, 34, 80, 0.4), 0 4px 12px rgba(17, 34, 80, 0.2)' 
+                : '0 4px 12px rgba(0, 0, 0, 0.1)'
             }}
             disabled={!hasAnyValue}
             data-testid="button-save"
           >
-            Сохранить
+            Сохранить элемент
           </button>
         </div>
       </div>

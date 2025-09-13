@@ -77,7 +77,7 @@ export default function OutfitsPage() {
         name: selectedOutfit.name,
         items: outfitItems,
         category: selectedOutfit.category,
-        tags: selectedOutfit.tags || [],
+        tags: selectedOutfit.tags ?? [],
       });
     }
   };
@@ -169,10 +169,7 @@ export default function OutfitsPage() {
                 <span className="font-black text-lg">Категория:</span> {selectedOutfit.category || 'Не указано'}
               </div>
               <div className="text-base text-foreground">
-                <span className="font-black text-lg">Стиль:</span> {selectedOutfit.style || 'Не указан'}
-              </div>
-              <div className="text-base text-foreground">
-                <span className="font-black text-lg">Сезон:</span> {getSeason(selectedOutfit.season)}
+                <span className="font-black text-lg">Теги:</span> {selectedOutfit.tags?.length > 0 ? selectedOutfit.tags.join(', ') : 'Не указаны'}
               </div>
             </div>
           </div>
@@ -424,7 +421,7 @@ export default function OutfitsPage() {
               {selectedOutfit ? (
                 <div>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Генерация на основе образа: {selectedOutfit?.name || 'Неизвестный образ'}
+                    Генерация на основе образа: {selectedOutfit.name || 'Неизвестный образ'}
                   </p>
                   {/* Carousel with outfit items - read-only */}
                   <div className="mb-6">
