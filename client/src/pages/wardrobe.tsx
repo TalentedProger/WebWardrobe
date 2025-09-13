@@ -9,7 +9,7 @@ import type { ClothingItem as ClothingItemType } from "@shared/schema";
 
 const categories = [
   { id: "all", label: "Всё" },
-  { id: "favorites", label: "Избранное ❤️" },
+  { id: "favorites", label: "❤️" },
   { id: "top", label: "Верх" },
   { id: "bottom", label: "Низ" },
   { id: "shoes", label: "Обувь" },

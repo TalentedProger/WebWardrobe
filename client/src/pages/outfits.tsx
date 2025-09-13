@@ -7,7 +7,7 @@ import type { Outfit, ClothingItem } from "@shared/schema";
 
 const categories = [
   { id: "all", label: "Все образы" },
-  { id: "favorites", label: "Избранное ❤️" },
+  { id: "favorites", label: "❤️" },
   { id: "Work", label: "Работа" },
   { id: "Casual", label: "Повседневное" },
   { id: "Special", label: "Особое" },

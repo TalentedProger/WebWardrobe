@@ -302,9 +302,9 @@ export default function BuilderPage() {
 
             {/* Category Title - Top Center */}
             <div className="flex justify-center pt-20 pb-8">
-              <h2 className="text-3xl font-bold text-black text-center">
+              <h1 className="text-4xl font-black text-black text-center tracking-tight">
                 {clothingSlots.find(s => s.key === activeSlot)?.name}
-              </h2>
+              </h1>
             </div>
 
             {/* Three Items Display - Center Layout */}
@@ -353,16 +353,15 @@ export default function BuilderPage() {
                         <div
                           className="aspect-square rounded-3xl overflow-hidden transition-all duration-500"
                           style={{
-                            background: 'rgba(255, 255, 255, 0.2)',
+                            background: 'rgba(255, 255, 255, 0.15)',
                             backdropFilter: 'blur(20px)',
-                            border: '3px solid rgba(0, 255, 255, 0.8)',
+                            border: '3px solid rgba(0, 0, 0, 0.3)',
                             boxShadow: `
-                              0 0 20px rgba(0, 255, 255, 0.6),
-                              0 0 40px rgba(0, 255, 255, 0.4),
-                              0 0 60px rgba(0, 255, 255, 0.2),
-                              0 20px 40px rgba(0, 0, 0, 0.3)
-                            `,
-                            animation: 'neonPulse 2s ease-in-out infinite alternate'
+                              0 12px 40px rgba(0, 0, 0, 0.3),
+                              0 8px 24px rgba(0, 0, 0, 0.2),
+                              0 4px 12px rgba(0, 0, 0, 0.15),
+                              inset 0 1px 0 rgba(255, 255, 255, 0.1)
+                            `
                           }}
                           data-testid={`clothing-item-${filteredItemsForSlot(activeSlot)[currentSwipeIndex]?.id}`}
                         >
@@ -375,8 +374,8 @@ export default function BuilderPage() {
                         </div>
                         
                         {/* Item Name */}
-                        <div className="text-center mt-4">
-                          <p className="text-black font-bold text-xl">
+                        <div className="text-center mt-6">
+                          <p className="text-black font-bold text-xl tracking-wide">
                             {filteredItemsForSlot(activeSlot)[currentSwipeIndex]?.name}
                           </p>
                         </div>
@@ -455,7 +454,7 @@ export default function BuilderPage() {
                 </div>
               ) : (
                 <div className="text-center">
-                  <p className="text-black text-xl font-medium">
+                  <p className="text-black text-xl font-bold tracking-wide">
                     Нет доступных вещей для этой категории
                   </p>
                 </div>
@@ -472,18 +471,18 @@ export default function BuilderPage() {
                     setSelectedItemInModal(null);
                     setCurrentSwipeIndex(0);
                   }}
-                  className="px-12 py-4 rounded-2xl font-bold text-xl transition-all duration-200 transform active:scale-95"
+                  className="px-12 py-4 rounded-2xl font-bold text-xl transition-all duration-200 transform active:scale-95 hover:scale-105"
                   style={{
-                    background: 'rgba(0, 0, 0, 0.9)',
+                    background: 'rgba(255, 255, 255, 0.1)',
                     backdropFilter: 'blur(20px)',
-                    border: '3px solid rgba(0, 255, 255, 0.8)',
-                    color: 'white',
+                    border: '2px solid rgba(0, 0, 0, 0.3)',
+                    color: 'black',
                     boxShadow: `
-                      0 0 20px rgba(0, 255, 255, 0.6),
-                      0 0 40px rgba(0, 255, 255, 0.4),
-                      0 8px 32px rgba(0, 0, 0, 0.3)
-                    `,
-                    animation: 'neonPulse 2s ease-in-out infinite alternate'
+                      0 12px 40px rgba(0, 0, 0, 0.25),
+                      0 8px 24px rgba(0, 0, 0, 0.15),
+                      0 4px 12px rgba(0, 0, 0, 0.1),
+                      inset 0 1px 0 rgba(255, 255, 255, 0.2)
+                    `
                   }}
                   data-testid="button-select-item"
                 >
